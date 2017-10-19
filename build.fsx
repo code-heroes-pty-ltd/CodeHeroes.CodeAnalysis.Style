@@ -191,6 +191,9 @@ let executingOnBitrise = bitriseBuildNumber <> -1
 "clean-misc"
     ==> "clean"
 
+"restore-packages"
+    ==> "build"
+
 // "root"
 //     =?> ("clean", not executingOnBitrise)
 //     ==> "restore-packages"
