@@ -1,4 +1,4 @@
 ﻿using System.Reflection;
 
-[assembly: AssemblyTitle("Analyzers")]
+[assembly: AssemblyTitle("Analyzers.UnitTests")]
 [assembly: AssemblyDescription("")]

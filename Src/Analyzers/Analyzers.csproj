@@ -7,18 +7,22 @@
         <LangVersion>latest</LangVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-		<Version>1.0.0</Version>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<Authors>Code Heroes</Authors>
-		<Company>Code Heroes</Company>
-		<PackageLicenseUrl>https://github.com/code-heroes-pty-ltd/CodeHeroes.CodeAnalysis.Style/blob/master/LICENSE</PackageLicenseUrl>
-		<PackageProjectUrl>https://github.com/code-heroes-pty-ltd/CodeHeroes.CodeAnalysis.Style</PackageProjectUrl>
-		<PackageIconUrl>https://github.com/code-heroes-pty-ltd/CodeHeroes.CodeAnalysis.Style/master/Art/Logo64x64.png</PackageIconUrl>
-		<RepositoryUrl>https://github.com/code-heroes-pty-ltd/CodeHeroes.CodeAnalysis.Style</RepositoryUrl>
-		<PackageTags>.NET C# style code-analysis</PackageTags>
-		<Description>Contains style-related code analyzers for Code Heroes.</Description>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <Version>1.0.0</Version>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <Authors>Code Heroes</Authors>
+        <Company>Code Heroes</Company>
+        <PackageLicenseUrl>https://github.com/code-heroes-pty-ltd/CodeHeroes.CodeAnalysis.Style/blob/master/LICENSE</PackageLicenseUrl>
+        <PackageProjectUrl>https://github.com/code-heroes-pty-ltd/CodeHeroes.CodeAnalysis.Style</PackageProjectUrl>
+        <PackageIconUrl>https://github.com/code-heroes-pty-ltd/CodeHeroes.CodeAnalysis.Style/master/Art/Logo64x64.png</PackageIconUrl>
+        <RepositoryUrl>https://github.com/code-heroes-pty-ltd/CodeHeroes.CodeAnalysis.Style</RepositoryUrl>
+        <PackageTags>.NET C# style code-analysis</PackageTags>
+        <Description>Contains style-related code analyzers for Code Heroes.</Description>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="..\AssemblyInfoCommon.cs" Link="Properties\AssemblyInfoCommon.cs" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.4.0" />
@@ -32,5 +36,5 @@
             <DependentUpon>Resources.resx</DependentUpon>
         </Compile>
     </ItemGroup>
-    
+
 </Project>

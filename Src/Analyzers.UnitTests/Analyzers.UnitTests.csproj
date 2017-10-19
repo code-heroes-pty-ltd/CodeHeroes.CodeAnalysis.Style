@@ -1,13 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AssemblyName>Analyzers.Test</AssemblyName>
-        <RootNamespace>Analyzers.Test</RootNamespace>
+        <AssemblyName>Analyzers.UnitTests</AssemblyName>
+        <RootNamespace>Analyzers.UnitTests</RootNamespace>
         <TargetFrameworks>net46;netstandard1.3</TargetFrameworks>
         <LangVersion>latest</LangVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     </PropertyGroup>
+
+    <ItemGroup>
+        <Compile Include="..\AssemblyInfoCommon.cs" Link="Properties\AssemblyInfoCommon.cs" />
+    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="2.4.0" />
@@ -18,5 +22,5 @@
     <ItemGroup>
       <ProjectReference Include="..\Analyzers\Analyzers.csproj" />
     </ItemGroup>
-    
+
 </Project>

@@ -15,14 +15,14 @@ open Fake.XamarinHelper
 let projectName = "CodeHeroes.CodeAnalysis.Style"
 
 // version properties
-// let versionInfo = getReleaseInfo "release-notes.md"
+let versionInfo = getReleaseInfo "release-notes.md"
 
-// trace ("NOTES: " + versionInfo.Notes)
+trace ("NOTES: " + versionInfo.Notes)
 
-// let semanticVersion = versionInfo.Version
+let semanticVersion = versionInfo.Version
 let buildNumber = environVarOrDefault "BUILD_NUMBER" "0"
 let buildUrl = environVarOrDefault "BUILD_URL" ""
-// let version = (semanticVersion + "." + buildNumber)
+let version = (semanticVersion + "." + buildNumber)
 
 // can be overridden with -ev name value
 let configuration = environVarOrDefault "CONFIGURATION" "Release"
@@ -38,7 +38,7 @@ let solution = srcDir @@ projectName + ".sln"
 
 let verbosity = Some(Detailed)
 
-//trace ("Starting build " + version)
+trace ("Starting build " + version)
 
 Target "clean-misc" (fun _ ->
     CleanDirs[genDir; testDir; tempDir]
@@ -94,42 +94,6 @@ Target "restore-packages" (fun _ ->
         )
 )
 
-Target "build" (fun () ->
-    build (fun defaults ->
-        {
-            defaults with
-                Verbosity = verbosity
-                Targets = ["Build"]
-                Properties =
-                    [
-                        "Optimize", "True"
-                        "DebugSymbols", "True"
-                        "Configuration", configuration
-                    ]
-        })
-        solution
-)
-
-Target "deploy-build-copy" //(fun () ->
-    // let vsixFile = srcDir @@ "Analyzers" @@ "Analyzers.Vsix" @@ "bin" @@ configuration @@ "Analyzers.Vsix.vsix"
-    //let targetFile = deployDir @@ projectName + ".vsix"
-    // trace ("Deploying VSIX by copying '" + vsixFile + "' to '" + targetFile + "'")
-    // //if not (String.IsNullOrEmpty deployDir) then CopyFile targetFile vsixFile
-    // let dir = srcDir @@ "Analyzers" @@ "Analyzers.Vsix" @@ "bin" @@ configuration
-    // trace ("Dir is '" + dir + "'")
-    // let files = !! (dir + "/*")
-    // CopyFiles deployDir files
-//)
-    DoNothing
-
-Target "all"
-    DoNothing
-
-Target "root"
-    DoNothing
-
-(*
-
 Target "pre-build" (fun () ->
     CreateCSharpAssemblyInfoWithConfig (srcDir @@ "AssemblyInfoCommon.cs")
         [
@@ -146,6 +110,39 @@ Target "pre-build" (fun () ->
         ]
         (AssemblyInfoFileConfig(false))
 )
+
+Target "build" (fun () ->
+    build (fun defaults ->
+        {
+            defaults with
+                Verbosity = verbosity
+                Targets = ["Build"]
+                Properties =
+                    [
+                        "Optimize", "True"
+                        "DebugSymbols", "True"
+                        "Configuration", configuration
+                        "Version", semanticVersion
+                    ]
+        })
+        solution
+)
+
+Target "deploy-build-copy" (fun () ->
+    let nupkgFile = "Analyzers." + semanticVersion + ".nupkg"
+    let nupkgPath = srcDir @@ "Analyzers" @@ "bin" @@ configuration @@ nupkgFile
+    let targetFile = deployDir @@ nupkgFile
+    trace ("Deploying NuGet package by copying '" + nupkgPath + "' to '" + targetFile + "'")
+    if not (String.IsNullOrEmpty deployDir) then CopyFile targetFile nupkgPath
+)
+
+Target "all"
+    DoNothing
+
+Target "root"
+    DoNothing
+
+(*
 
 Target "deploy-android-copy" (fun () ->
     let targetFile = deployDir @@ projectName + ".apk"
@@ -204,6 +201,7 @@ let executingOnBitrise = bitriseBuildNumber <> -1
     ==> "clean"
 
 "restore-packages"
+    ==> "pre-build"
     ==> "build"
 
 // "root"
