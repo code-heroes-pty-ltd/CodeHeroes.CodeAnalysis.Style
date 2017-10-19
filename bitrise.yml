@@ -1,0 +1,114 @@
+---
+format_version: 1.4.0
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+workflows:
+    _turnBillOn:
+        steps:
+        - curl-ping:
+            is_skippable: true
+            inputs:
+            - ping_url: https://1p3rkm5a41.execute-api.us-west-2.amazonaws.com/prod/Lifx-BuildRobotLamp
+            - curl_params: '-H "Content-Type: application/json" -X POST -d ''{"power": "on","color": "blue","brightness": 0.5}'''
+
+    _turnBillOff:
+        steps:
+        - curl-ping:
+            is_skippable: true
+            is_always_run: true
+            inputs:
+            - ping_url: https://1p3rkm5a41.execute-api.us-west-2.amazonaws.com/prod/Lifx-BuildRobotLamp
+            - curl_params: '-H "Content-Type: application/json" -X POST -d ''{"power": "on","buildStatus": $BITRISE_BUILD_STATUS}'''
+              opts:
+                is_expand: true
+
+    _offsetBuildNumber:
+        steps:
+        - script:
+            inputs:
+            - content: |-
+                #!/bin/bash
+                # see https://bitrise.uservoice.com/forums/235233-general/suggestions/10798152-set-bitrise-build-number
+                set -e
+
+                if [ -z "$BITRISE_BUILD_NUMBER" ] ; then
+                  echo " [!] BITRISE_BUILD_NUMBER not provided"
+                  exit 1
+                fi
+                echo "=> Original BITRISE_BUILD_NUMBER: $BITRISE_BUILD_NUMBER"
+
+                set -x
+                build_number_offset=16
+                new_build_num=$(($BITRISE_BUILD_NUMBER + $build_number_offset))
+                envman add --key BITRISE_BUILD_NUMBER --value $new_build_num
+                envman add --key BUILD_NUMBER --value $new_build_num
+
+    _installDotNetCore:
+        steps:
+        - script:
+            inputs:
+            - content: |-
+                #!/bin/bash
+                set -ex
+
+                echo "Installing .NET core"
+                brew update
+                brew install openssl
+                mkdir -p /usr/local/lib
+                ln -s /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib /usr/local/lib/
+                ln -s /usr/local/opt/openssl/lib/libssl.1.0.0.dylib /usr/local/lib/
+                echo "Install .NET Core SDK"
+                wget https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain/dotnet-install.sh
+                chmod +x dotnet-install.sh
+                ./dotnet-install.sh  --channel "2.0"
+                export DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+                export DOTNET_CLI_TELEMETRY_OPTOUT=1
+                ln -s /Users/vagrant/.dotnet/dotnet /usr/local/bin/dotnet
+                echo "Installed .NET Core"
+                dotnet --version
+
+    slack:
+        envs:
+        - DEPLOY_COPY: true
+        - TAG: false
+        before_run:
+        - _turnBillOn
+        - _installDotNetCore
+        - _offsetBuildNumber
+        steps:
+        - cache-pull:
+        - script:
+            title: Build
+            inputs:
+            - content: |-
+                #!/bin/bash
+                set -ex
+                bash ./build.sh
+        - cache-push:
+            inputs:
+            - cache_paths: |-
+                ./Src/packages/
+                /Users/vagrant/.nuget/
+        after_run:
+        - _turnBillOff
+
+app:
+  envs:
+  - opts:
+      is_expand: true
+    BUILD_NUMBER: "$BITRISE_BUILD_NUMBER"
+  - opts:
+      is_expand: true
+    BUILD_URL: "$BITRISE_BUILD_URL"
+  - opts:
+      is_expand: true
+    DEPLOY_DIR: "$BITRISE_DEPLOY_DIR"
+
+trigger_map:
+- push_branch: develop
+  workflow: slack
+- push_branch: feature/*
+  workflow: slack
+- push_branch: chore/*
+  workflow: slack
+- push_branch: fix/*
+  workflow: slack
