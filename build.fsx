@@ -32,6 +32,7 @@ let deployDir = environVarOrDefault "DEPLOY_DIR" ""
 // file and directory paths
 let genDir = "Gen/"
 let srcDir = "Src/"
+let nugetDir = ".nuget/"
 let testDir = genDir @@ "Test"
 let tempDir = genDir @@ "Temp"
 let solution = srcDir @@ projectName + ".sln"
@@ -136,6 +137,33 @@ Target "deploy-build-copy" (fun () ->
     if not (String.IsNullOrEmpty deployDir) then CopyFile targetFile nupkgPath
 )
 
+Target "test" (fun _ ->
+    ignore(Shell.Exec(nugetDir @@ "NuGet.exe", "install xunit.runner.console -ExcludeVersion -OutputDirectory " + (srcDir @@ "packages")))
+
+    xUnit2 (fun defaults ->
+        {
+            defaults with
+                ToolPath = (srcDir @@ "packages" @@ "xunit.runner.console" @@ "tools" @@ "net452" @@ "xunit.console.exe")
+                HtmlOutputPath = Some (testDir @@ "UnitTests.html");
+                XmlOutputPath = Some (testDir @@ "UnitTests.xml");
+        })
+        [
+            srcDir @@ "Analyzers.UnitTests" @@ "bin" @@ configuration @@ "net46" @@ "Analyzers.UnitTests.dll"
+        ]
+)
+
+Target "deploy-test-copy" (fun () ->
+    let htmlFile = testDir @@ "UnitTests.html"
+    let xmlFile = testDir @@ "UnitTests.xml"
+    trace ("Deploying unit test result files")
+
+    let deployFiles =
+        CopyFile (deployDir @@ "UnitTests.html") htmlFile
+        CopyFile (deployDir @@ "UnitTests.xml") xmlFile
+
+    if not (String.IsNullOrEmpty deployDir) then deployFiles
+)
+
 Target "all"
     DoNothing
 
@@ -149,20 +177,6 @@ Target "tag" (fun _ ->
     ignore(Shell.Exec("git", "push origin v" + version))
 )
 
-// this does not work on Mono
-Target "test-core" (fun _ ->
-    xUnit2 (fun defaults ->
-        {
-            defaults with
-                ShadowCopy = false;
-                WorkingDir = Some (srcDir @@ "UnitTests/bin" @@ configuration)
-                //HtmlOutputPath = Some testDir;
-                //XmlOutputPath = Some testDir;
-        })
-        [
-            projectName + ".UnitTests.dll"
-        ]
-)
 *)
 
 // put the current version and release notes into an environment variable so that Bitrise workflow steps can utilize them
@@ -196,6 +210,8 @@ let executingOnBitrise = bitriseBuildNumber <> -1
     =?> ("clean", not executingOnBitrise)
     ==> "build"
     =?> ("deploy-build-copy", deployCopy)
+    ==> "test"
+    =?> ("deploy-test-copy", deployCopy)
     ==> "all"
 
 RunTargetOrDefault "all"
