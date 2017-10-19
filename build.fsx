@@ -110,16 +110,17 @@ Target "build" (fun () ->
         solution
 )
 
-Target "deploy-build-copy" (fun () ->
-    let vsixFile = srcDir @@ "Analyzers" @@ "Analyzers.Vsix" @@ "bin" @@ configuration @@ "Analyzers.Vsix.vsix"
-    let targetFile = deployDir @@ projectName + ".vsix"
-    trace ("Deploying VSIX by copying '" + vsixFile + "' to '" + targetFile + "'")
-    //if not (String.IsNullOrEmpty deployDir) then CopyFile targetFile vsixFile
-    let dir = srcDir @@ "Analyzers" @@ "Analyzers.Vsix" @@ "bin" @@ configuration
-    trace ("Dir is '" + dir + "'")
-    let files = !! (dir + "/*")
-    CopyFiles deployDir files
-)
+Target "deploy-build-copy" //(fun () ->
+    // let vsixFile = srcDir @@ "Analyzers" @@ "Analyzers.Vsix" @@ "bin" @@ configuration @@ "Analyzers.Vsix.vsix"
+    //let targetFile = deployDir @@ projectName + ".vsix"
+    // trace ("Deploying VSIX by copying '" + vsixFile + "' to '" + targetFile + "'")
+    // //if not (String.IsNullOrEmpty deployDir) then CopyFile targetFile vsixFile
+    // let dir = srcDir @@ "Analyzers" @@ "Analyzers.Vsix" @@ "bin" @@ configuration
+    // trace ("Dir is '" + dir + "'")
+    // let files = !! (dir + "/*")
+    // CopyFiles deployDir files
+//)
+    DoNothing
 
 Target "all"
     DoNothing
@@ -233,7 +234,7 @@ let executingOnBitrise = bitriseBuildNumber <> -1
 "root"
     =?> ("clean", not executingOnBitrise)
     ==> "build"
-    ==> "deploy-build-copy"
+    =?> ("deploy-build-copy", deployCopy)
     ==> "all"
 
 RunTargetOrDefault "all"
