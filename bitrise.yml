@@ -102,6 +102,9 @@ app:
   - opts:
       is_expand: true
     DEPLOY_DIR: "$BITRISE_DEPLOY_DIR"
+  - opts:
+      is_expand: true
+    VSToolsPath: "Src/packages/Microsoft.VSSDKBuildTools.15.1.192"
 
 trigger_map:
 - push_branch: develop
