@@ -88,6 +88,9 @@ workflows:
             - cache_paths: |-
                 ./Src/packages/
                 /Users/vagrant/.nuget/
+        - deploy-to-bitrise-io:
+            inputs:
+            - notify_user_groups: none
         after_run:
         - _turnBillOff
 

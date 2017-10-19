@@ -144,18 +144,6 @@ Target "root"
 
 (*
 
-Target "deploy-android-copy" (fun () ->
-    let targetFile = deployDir @@ projectName + ".apk"
-    trace ("Deploying Android by copying '" + apkFile + "' to '" + targetFile + "'")
-    if not (String.IsNullOrEmpty deployDir) then CopyFile targetFile apkFile
-)
-
-Target "deploy-ios-copy" (fun () ->
-    let targetFile = deployDir @@ projectName + ".ipa"
-    trace ("Deploying iOS by copying '" + ipaFile + "' to '" + targetFile + "'")
-    if not (String.IsNullOrEmpty deployDir) then CopyFile targetFile ipaFile
-)
-
 Target "tag" (fun _ ->
     ignore(Shell.Exec("git", "tag v" + version))
     ignore(Shell.Exec("git", "push origin v" + version))
@@ -175,6 +163,7 @@ Target "test-core" (fun _ ->
             projectName + ".UnitTests.dll"
         ]
 )
+*)
 
 // put the current version and release notes into an environment variable so that Bitrise workflow steps can utilize them
 // note that failures are expected on non-Bitrise machines
@@ -190,7 +179,6 @@ try
     ignore(Shell.Exec("envman", "add --key RELEASE_NOTES --valuefile " + tempReleaseNotesPath))
 with
 | ex -> ()
-*)
 
 // build dependencies
 let deployCopy = getEnvironmentVarAsBool "DEPLOY_COPY"
@@ -203,31 +191,6 @@ let executingOnBitrise = bitriseBuildNumber <> -1
 "restore-packages"
     ==> "pre-build"
     ==> "build"
-
-// "root"
-//     =?> ("clean", not executingOnBitrise)
-//     ==> "restore-packages"
-//     ==> "pre-build"
-//     ==> "build-core"
-//     ==> "test-core"
-// //    ==> "all"
-
-// "root"
-//     =?> ("clean", not executingOnBitrise)
-//     ==> "restore-packages"
-//     ==> "pre-build"
-//     =?> ("build-android", not deployCopy)
-//     =?> ("package-android", deployCopy)
-//     =?> ("deploy-android-copy", deployCopy)
-//     ==> "all"
-
-// "root"
-//     =?> ("clean", not executingOnBitrise)
-//     ==> "restore-packages"
-//     ==> "pre-build"
-//     ==> "build-ios"
-//     =?> ("deploy-ios-copy", deployCopy)
-//     ==> "all"
 
 "root"
     =?> ("clean", not executingOnBitrise)
