@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzers", "Analyzers\Analyzers\Analyzers.csproj", "{F6129CD2-60AD-4EEF-81D9-FCB19BBDEBD9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzers", "Analyzers\Analyzers.csproj", "{F6129CD2-60AD-4EEF-81D9-FCB19BBDEBD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzers.Test", "Analyzers\Analyzers.Test\Analyzers.Test.csproj", "{31E47979-435B-45CF-BACF-9A6F23638182}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzers.Test", "Analyzers.Test\Analyzers.Test.csproj", "{31E47979-435B-45CF-BACF-9A6F23638182}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzers.Vsix", "Analyzers\Analyzers.Vsix\Analyzers.Vsix.csproj", "{21D61959-7F6B-49AB-8662-FD0C715142D7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzers.Vsix", "Analyzers.Vsix\Analyzers.Vsix.csproj", "{21D61959-7F6B-49AB-8662-FD0C715142D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
