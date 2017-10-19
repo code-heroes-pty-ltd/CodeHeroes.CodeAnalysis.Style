@@ -4,12 +4,18 @@
 open System
 open System.IO
 open BuildHelpers
-open Fake
-open Fake.AssemblyInfoFile
+open Fake.Core
+open Fake.Core.Globbing
+open Fake.Core.Globbing.Operators
+open Fake.Core.Process
+open Fake.Core.TargetOperators
+open Fake.Core.Trace
+open Fake.DotNet
+open Fake.DotNet.NuGet.Restore
+open Fake.DotNet.Testing.XUnit2
+open Fake.IO
+open Fake.IO.FileSystemOperators
 open Fake.MSBuildHelper
-open Fake.Testing
-open Fake.TraceHelper
-open Fake.XamarinHelper
 
 // project properties
 let projectName = "CodeHeroes.CodeAnalysis.Style"
@@ -20,14 +26,14 @@ let versionInfo = getReleaseInfo "release-notes.md"
 trace ("NOTES: " + versionInfo.Notes)
 
 let semanticVersion = versionInfo.Version
-let buildNumber = environVarOrDefault "BUILD_NUMBER" "0"
-let buildUrl = environVarOrDefault "BUILD_URL" ""
+let buildNumber = Environment.environVarOrDefault "BUILD_NUMBER" "0"
+let buildUrl = Environment.environVarOrDefault "BUILD_URL" ""
 let version = (semanticVersion + "." + buildNumber)
 
 // can be overridden with -ev name value
-let configuration = environVarOrDefault "CONFIGURATION" "Release"
-let deployDir = environVarOrDefault "DEPLOY_DIR" ""
-
+let configuration = Environment.environVarOrDefault "CONFIGURATION" "Release"
+let deployCopy = Environment.environVarAsBool "DEPLOY_COPY"
+let deployDir = Environment.environVarOrDefault "DEPLOY_DIR" ""
 
 // file and directory paths
 let genDir = "Gen/"
@@ -41,23 +47,33 @@ let verbosity = Some(Detailed)
 
 trace ("Starting build " + version)
 
-Target "clean-misc" (fun _ ->
-    CleanDirs[genDir; testDir; tempDir]
+Target.Create "clean-misc" (fun _ ->
+    Shell.CleanDirs[genDir; testDir; tempDir]
 )
 
-Target "clean" (fun _ ->
+Target.Create "clean" (fun _ ->
+    let logFile = "clean.binlog"
+
     build (fun defaults ->
         {
             defaults with
                 Verbosity = verbosity
                 Targets = ["Clean"]
                 Properties = ["Configuration", configuration]
+                BinaryLoggers = Some
+                    [
+                        logFile
+                    ]
+                NoConsoleLogger = true
+                NoLogo = true
         })
         (solution)
+    
+    if deployCopy then Shell.CopyFile (deployDir @@ logFile) logFile
 )
 
 // would prefer to use the built-in RestorePackages function, but it restores packages in the root dir (not in Src), which causes build problems
-Target "restore-packages" (fun _ ->
+Target.Create "restore-packages" (fun _ ->
     let nugetFeeds = [
         "https://api.nuget.org/v3/index.json"
     ]
@@ -95,24 +111,26 @@ Target "restore-packages" (fun _ ->
         )
 )
 
-Target "pre-build" (fun () ->
-    CreateCSharpAssemblyInfoWithConfig (srcDir @@ "AssemblyInfoCommon.cs")
+Target.Create "pre-build" (fun _ ->
+    AssemblyInfoFile.CreateCSharpWithConfig (srcDir @@ "AssemblyInfoCommon.cs")
         [
-            Attribute.Version version
-            Attribute.FileVersion version
-            Attribute.Configuration configuration
-            Attribute.Company "Code Heroes"
-            Attribute.Product projectName
-            Attribute.Copyright "© Copyright. Code Heroes."
-            Attribute.Trademark ""
-            Attribute.Culture ""
-            Attribute.StringAttribute("NeutralResourcesLanguage", "en-AU", "System.Resources")
-            Attribute.StringAttribute("AssemblyInformationalVersion", semanticVersion, "System.Reflection")
+            AssemblyInfo.Version version
+            AssemblyInfo.FileVersion version
+            AssemblyInfo.Configuration configuration
+            AssemblyInfo.Company "Code Heroes"
+            AssemblyInfo.Product projectName
+            AssemblyInfo.Copyright "© Copyright. Code Heroes."
+            AssemblyInfo.Trademark ""
+            AssemblyInfo.Culture ""
+            AssemblyInfo.StringAttribute("NeutralResourcesLanguage", "en-AU", "System.Resources")
+            AssemblyInfo.StringAttribute("AssemblyInformationalVersion", semanticVersion, "System.Reflection")
         ]
         (AssemblyInfoFileConfig(false))
 )
 
-Target "build" (fun () ->
+Target.Create "build" (fun _ ->
+    let logFile = "build.binlog"
+
     build (fun defaults ->
         {
             defaults with
@@ -125,19 +143,27 @@ Target "build" (fun () ->
                         "Configuration", configuration
                         "Version", semanticVersion
                     ]
+                BinaryLoggers = Some
+                    [
+                        logFile
+                    ]
+                NoConsoleLogger = true
+                NoLogo = true
         })
         solution
+    
+    if deployCopy then Shell.CopyFile (deployDir @@ logFile) logFile
 )
 
-Target "deploy-build-copy" (fun () ->
+Target.Create "deploy-build-copy" (fun _ ->
     let nupkgFile = "Analyzers." + semanticVersion + ".nupkg"
     let nupkgPath = srcDir @@ "Analyzers" @@ "bin" @@ configuration @@ nupkgFile
     let targetFile = deployDir @@ nupkgFile
     trace ("Deploying NuGet package by copying '" + nupkgPath + "' to '" + targetFile + "'")
-    if not (String.IsNullOrEmpty deployDir) then CopyFile targetFile nupkgPath
+    if not (String.IsNullOrEmpty deployDir) then Shell.CopyFile targetFile nupkgPath
 )
 
-Target "test" (fun _ ->
+Target.Create "test" (fun _ ->
     ignore(Shell.Exec(nugetDir @@ "NuGet.exe", "install xunit.runner.console -ExcludeVersion -OutputDirectory " + (srcDir @@ "packages")))
 
     xUnit2 (fun defaults ->
@@ -152,23 +178,23 @@ Target "test" (fun _ ->
         ]
 )
 
-Target "deploy-test-copy" (fun () ->
+Target.Create "deploy-test-copy" (fun _ ->
     let htmlFile = testDir @@ "UnitTests.html"
     let xmlFile = testDir @@ "UnitTests.xml"
     trace ("Deploying unit test result files")
 
     let deployFiles =
-        CopyFile (deployDir @@ "UnitTests.html") htmlFile
-        CopyFile (deployDir @@ "UnitTests.xml") xmlFile
+        Shell.CopyFile (deployDir @@ "UnitTests.html") htmlFile
+        Shell.CopyFile (deployDir @@ "UnitTests.xml") xmlFile
 
     if not (String.IsNullOrEmpty deployDir) then deployFiles
 )
 
-Target "all"
-    DoNothing
+Target.Create "all"
+    Target.DoNothing
 
-Target "root"
-    DoNothing
+Target.Create "root"
+    Target.DoNothing
 
 (*
 
@@ -195,8 +221,7 @@ with
 | ex -> ()
 
 // build dependencies
-let deployCopy = getEnvironmentVarAsBool "DEPLOY_COPY"
-let bitriseBuildNumber = System.Convert.ToInt32(environVarOrDefault "BITRISE_BUILD_NUMBER" "-1")
+let bitriseBuildNumber = System.Convert.ToInt32(Environment.environVarOrDefault "BITRISE_BUILD_NUMBER" "-1")
 let executingOnBitrise = bitriseBuildNumber <> -1
 
 "clean-misc"
@@ -210,8 +235,9 @@ let executingOnBitrise = bitriseBuildNumber <> -1
     =?> ("clean", not executingOnBitrise)
     ==> "build"
     =?> ("deploy-build-copy", deployCopy)
-    ==> "test"
-    =?> ("deploy-test-copy", deployCopy)
+    // grrrrr! Disabling for now due to this FAKE bug: https://github.com/fsharp/FAKE/issues/1713
+    //==> "test"
+    //=?> ("deploy-test-copy", deployCopy)
     ==> "all"
 
-RunTargetOrDefault "all"
+Target.RunOrDefault "all"

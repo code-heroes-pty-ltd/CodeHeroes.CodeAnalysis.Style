@@ -1,8 +1,14 @@
 module BuildHelpers
 
 open Fake
+open Fake.Core
+open Fake.Core.Globbing
+open Fake.Core.Globbing.Operators
+open Fake.Core.Process
+open Fake.Core.String
+open Fake.IO
 open Fake.ReleaseNotesHelper
-open System.IO
+open System
 open System.Linq
 
 let Exec command args =
@@ -17,7 +23,7 @@ type ReleaseInfo =
 
 let getReleaseInfo file =
     let release =
-        ReadFile file
+        File.read file
         |> ReleaseNotesHelper.parseReleaseNotes
 
     {
