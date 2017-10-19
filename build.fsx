@@ -114,7 +114,11 @@ Target "deploy-build-copy" (fun () ->
     let vsixFile = srcDir @@ "Analyzers" @@ "Analyzers.Vsix" @@ "bin" @@ configuration @@ "Analyzers.Vsix.vsix"
     let targetFile = deployDir @@ projectName + ".vsix"
     trace ("Deploying VSIX by copying '" + vsixFile + "' to '" + targetFile + "'")
-    if not (String.IsNullOrEmpty deployDir) then CopyFile targetFile vsixFile
+    //if not (String.IsNullOrEmpty deployDir) then CopyFile targetFile vsixFile
+    let dir = srcDir @@ "Analyzers" @@ "Analyzers.Vsix" @@ "bin" @@ configuration
+    trace ("Dir is '" + dir + "'")
+    let files = !! (dir + "/*")
+    CopyFiles deployDir files
 )
 
 Target "all"
