@@ -6,6 +6,10 @@ Gen
 # MFractor
 .droidres
 
+# Cake
+tools/**
+!tools/packages.config
+
 # FAKE
 .fake
 
