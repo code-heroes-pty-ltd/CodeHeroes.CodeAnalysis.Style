@@ -1,27 +1,45 @@
 #addin "Cake.FileHelpers"
+#addin nuget:?package=Cake.Git
 
+// Versioning.
 var latestReleaseNote = ParseReleaseNotes("./release-notes.md");
 var semanticVersion = latestReleaseNote.Version;
-var buildNumber = EnvironmentVariable("BUILD_NUMBER") ?? "0";
+var buildNumber = int.Parse(EnvironmentVariable("BUILD_NUMBER") ?? "0");
 var version = semanticVersion + "." + buildNumber;
-Information("Starting build {0}", version);
+var nugetVersion = semanticVersion.ToString();
+var gitBranch = GitBranchCurrent(".");
+var isMasterBuild = gitBranch.FriendlyName == "master";
 
+if (!isMasterBuild)
+{
+    nugetVersion += ("-alpha" + buildNumber.ToString("000"));
+}
+
+// Parameters.
 var configuration = EnvironmentVariable("CONFIGURATION") ?? "Release";
 var deployLocally = bool.Parse(EnvironmentVariable("DEPLOY_LOCALLY") ?? "false");
 var localDeployDir = Directory(EnvironmentVariable("LOCAL_DEPLOY_DIR") ?? ".");
 var deployRemotely = bool.Parse(EnvironmentVariable("DEPLOY_REMOTELY") ?? "false");
 var remoteDeploySource = EnvironmentVariable("REMOTE_DEPLOY_SOURCE") ?? null;
 var remoteDeployKey = EnvironmentVariable("REMOTE_DEPLOY_KEY") ?? null;
+var tag = bool.Parse(EnvironmentVariable("TAG") ?? "false");
 var bitriseBuildNumber = int.Parse(EnvironmentVariable("BITRISE_BUILD_NUMBER") ?? "-1");
 var executingOnBitrise = bitriseBuildNumber != -1;
+var msBuildVerbosity = (Verbosity)Enum.Parse(typeof(Verbosity), EnvironmentVariable("MSBUILD_VERBOSITY") ?? "Verbose");
 
+// Paths.
 var genDir = Directory("Gen");
 var srcDir = Directory("Src");
-
 var projectName = "CodeHeroes.CodeAnalysis.Style";
 var solution = srcDir + File(projectName + ".sln");
 
-var verbosity = Verbosity.Verbose;
+// Debug output.
+Information("Starting build {0} against git branch '{1}'.", version, gitBranch.CanonicalName);
+
+if (deployRemotely)
+{
+    Information("NuGet version {0}", nugetVersion);
+}
 
 Task("Clean")
     .WithCriteria(!executingOnBitrise)
@@ -43,7 +61,7 @@ Task("Clean")
                         Enabled = true,
                         FileName = logFile
                     },
-                    Verbosity = verbosity
+                    Verbosity = msBuildVerbosity
                 }
                 .WithTarget("Clean"));
             
@@ -91,16 +109,16 @@ Task("Build")
                         Enabled = true,
                         FileName = logFile
                     },
-                    Verbosity = verbosity
+                    Verbosity = msBuildVerbosity
                 }
-                .WithProperty("Version", version)
+                .WithProperty("Version", nugetVersion)
                 .WithTarget("Build"));
             
             if (deployLocally)
             {
                 CopyFile(logFile, localDeployDir + logFile);
 
-                var nupkgFile = File("Analyzers." + semanticVersion + ".nupkg");
+                var nupkgFile = File("Analyzers." + nugetVersion + ".nupkg");
                 var nupkgFullFile = srcDir + Directory("Analyzers") + Directory("bin") + Directory(configuration) + nupkgFile;
 
                 CopyFile(nupkgFullFile, localDeployDir + nupkgFile);
@@ -130,8 +148,19 @@ Task("Test")
             }
         });
 
-Task("Deploy")
+Task("Tag")
     .IsDependentOn("Test")
+    .WithCriteria(tag)
+    .Does(
+        () =>
+        {
+            var tagName = "v" + version;
+            GitTag(".", tagName);
+            GitPushRef(".", "origin", tagName);
+        });
+
+Task("Deploy")
+    .IsDependentOn("Tag")
     .WithCriteria(deployRemotely)
     .Does(
         () =>
@@ -146,7 +175,7 @@ Task("Deploy")
                 throw new Exception("No remote deploy key set.");
             }
 
-            var nupkgFile = File("Analyzers." + semanticVersion + ".nupkg");
+            var nupkgFile = File("Analyzers." + nugetVersion + ".nupkg");
             var nupkgFullFile = srcDir + Directory("Analyzers") + Directory("bin") + Directory(configuration) + nupkgFile;
 
             NuGetPush(
