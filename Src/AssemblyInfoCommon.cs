@@ -8,9 +8,9 @@ using System.Resources;
 
 [assembly: AssemblyCompany("Code Heroes")]
 [assembly: AssemblyProduct("CodeHeroes.CodeAnalysis.Style")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: AssemblyInformationalVersion("1.0.0")]
+[assembly: AssemblyVersion("0.0.1.0")]
+[assembly: AssemblyFileVersion("0.0.1.0")]
+[assembly: AssemblyInformationalVersion("0.0.1")]
 [assembly: AssemblyCopyright("© Copyright. Code Heroes.")]
 [assembly: AssemblyConfiguration("Release")]
 

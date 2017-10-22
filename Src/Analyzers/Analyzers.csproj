@@ -7,8 +7,8 @@
         <LangVersion>latest</LangVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 
-        <Version>1.0.0</Version>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <Version>1.0.0</Version>
         <Authors>Code Heroes</Authors>
         <Company>Code Heroes</Company>
         <PackageLicenseUrl>https://github.com/code-heroes-pty-ltd/CodeHeroes.CodeAnalysis.Style/blob/master/LICENSE</PackageLicenseUrl>

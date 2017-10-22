@@ -68,7 +68,7 @@ workflows:
 
     slack:
         envs:
-        - DEPLOY_COPY: true
+        - DEPLOY_LOCALLY: true
         - TAG: false
         before_run:
         - _turnBillOn
@@ -104,7 +104,7 @@ app:
     BUILD_URL: "$BITRISE_BUILD_URL"
   - opts:
       is_expand: true
-    DEPLOY_DIR: "$BITRISE_DEPLOY_DIR"
+    LOCAL_DEPLOY_DIR: "$BITRISE_DEPLOY_DIR"
   - opts:
       is_expand: true
     VSToolsPath: "Src/packages/Microsoft.VSSDKBuildTools.15.1.192"

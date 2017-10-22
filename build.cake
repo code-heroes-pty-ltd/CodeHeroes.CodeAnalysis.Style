@@ -7,8 +7,11 @@ var version = semanticVersion + "." + buildNumber;
 Information("Starting build {0}", version);
 
 var configuration = EnvironmentVariable("CONFIGURATION") ?? "Release";
-var deployCopy = bool.Parse(EnvironmentVariable("DEPLOY_COPY") ?? "false");
-var deployDir = Directory(EnvironmentVariable("DEPLOY_DIR") ?? ".");
+var deployLocally = bool.Parse(EnvironmentVariable("DEPLOY_LOCALLY") ?? "false");
+var localDeployDir = Directory(EnvironmentVariable("LOCAL_DEPLOY_DIR") ?? ".");
+var deployRemotely = bool.Parse(EnvironmentVariable("DEPLOY_REMOTELY") ?? "false");
+var remoteDeploySource = EnvironmentVariable("REMOTE_DEPLOY_SOURCE") ?? null;
+var remoteDeployKey = EnvironmentVariable("REMOTE_DEPLOY_KEY") ?? null;
 var bitriseBuildNumber = int.Parse(EnvironmentVariable("BITRISE_BUILD_NUMBER") ?? "-1");
 var executingOnBitrise = bitriseBuildNumber != -1;
 
@@ -44,9 +47,9 @@ Task("Clean")
                 }
                 .WithTarget("Clean"));
             
-            if (deployCopy)
+            if (deployLocally)
             {
-                CopyFile(logFile, deployDir + logFile);
+                CopyFile(logFile, localDeployDir + logFile);
             }
         });
 
@@ -90,16 +93,17 @@ Task("Build")
                     },
                     Verbosity = verbosity
                 }
+                .WithProperty("Version", version)
                 .WithTarget("Build"));
             
-            if (deployCopy)
+            if (deployLocally)
             {
-                CopyFile(logFile, deployDir + logFile);
+                CopyFile(logFile, localDeployDir + logFile);
 
                 var nupkgFile = File("Analyzers." + semanticVersion + ".nupkg");
                 var nupkgFullFile = srcDir + Directory("Analyzers") + Directory("bin") + Directory(configuration) + nupkgFile;
 
-                CopyFile(nupkgFullFile, deployDir + nupkgFile);
+                CopyFile(nupkgFullFile, localDeployDir + nupkgFile);
             }
         });
 
@@ -120,14 +124,42 @@ Task("Test")
                 }
             );
 
-            if (deployCopy)
+            if (deployLocally)
             {
-                CopyFiles(GetFiles(genDir.ToString() + "/Analyzers.UnitTests.dll.*"), deployDir);
+                CopyFiles(GetFiles(genDir.ToString() + "/Analyzers.UnitTests.dll.*"), localDeployDir);
             }
         });
 
+Task("Deploy")
+    .IsDependentOn("Test")
+    .WithCriteria(deployRemotely)
+    .Does(
+        () =>
+        {
+            if (string.IsNullOrEmpty(remoteDeploySource))
+            {
+                throw new Exception("No remote deploy source set.");
+            }
+
+            if (string.IsNullOrEmpty(remoteDeployKey))
+            {
+                throw new Exception("No remote deploy key set.");
+            }
+
+            var nupkgFile = File("Analyzers." + semanticVersion + ".nupkg");
+            var nupkgFullFile = srcDir + Directory("Analyzers") + Directory("bin") + Directory(configuration) + nupkgFile;
+
+            NuGetPush(
+                nupkgFullFile,
+                new NuGetPushSettings
+                {
+                    Source = remoteDeploySource,
+                    ApiKey = remoteDeployKey
+                });
+        });
+
 Task("Default")
-    .IsDependentOn("Test");
+    .IsDependentOn("Deploy");
 
 CreateDirectory(genDir);
 

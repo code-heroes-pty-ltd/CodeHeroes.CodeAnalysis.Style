@@ -1,2 +1,2 @@
-## New in 1.0.0 (Released October 26th, 2017)
-* feature: testing
+## New in 0.0.1 (Released October 26th, 2017)
+* initial test release
