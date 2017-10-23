@@ -156,7 +156,14 @@ Task("Tag")
         {
             var tagName = "v" + version;
             GitTag(".", tagName);
-            GitPushRef(".", "origin", tagName);
+
+            // GitPushRef does not support ssh
+            StartProcess(
+                "git",
+                new ProcessSettings
+                {
+                    Arguments = "push origin " + tagName
+                });
         });
 
 Task("Deploy")
