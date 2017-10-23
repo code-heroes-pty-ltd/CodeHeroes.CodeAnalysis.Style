@@ -107,8 +107,8 @@ workflows:
     myget:
         envs:
         - DEPLOY_REMOTELY: true
-        - DEPLOY_REMOTE_SOURCE: "https://www.myget.org/F/codeheroes/api/v3/index.json"
-        - DEPLOY_REMOTE_KEY: "9955cda1-b1db-4536-ab2f-b31c41954ab0"
+        - REMOTE_DEPLOY_SOURCE: "https://www.myget.org/F/codeheroes/api/v3/index.json"
+        - REMOTE_DEPLOY_KEY: "9955cda1-b1db-4536-ab2f-b31c41954ab0"
         - TAG: true
         before_run:
         - _turnBillOn
@@ -130,8 +130,8 @@ workflows:
     nuget:
         envs:
         - DEPLOY_REMOTELY: true
-        - DEPLOY_REMOTE_SOURCE: "https://www.nuget.org/api/v2/package"
-        - DEPLOY_REMOTE_KEY: "c77fdbb5-46fd-419f-8d15-3539d6dc0bb0"
+        - REMOTE_DEPLOY_SOURCE: "https://www.nuget.org/api/v2/package"
+        - REMOTE_DEPLOY_KEY: "c77fdbb5-46fd-419f-8d15-3539d6dc0bb0"
         - TAG: true
         before_run:
         - _turnBillOn
