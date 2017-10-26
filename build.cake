@@ -9,8 +9,8 @@ var semanticVersion = latestReleaseNote.Version;
 var buildNumber = int.Parse(EnvironmentVariable("BUILD_NUMBER") ?? "0");
 var version = semanticVersion + "." + buildNumber;
 var nugetVersion = semanticVersion.ToString();
-var gitBranch = GitBranchCurrent(".");
-var isMasterBuild = gitBranch.FriendlyName == "master";
+var gitBranch = EnvironmentVariable("BITRISE_GIT_BRANCH") ?? "unknown";
+var isMasterBuild = gitBranch == "master";
 
 if (!isMasterBuild)
 {
@@ -35,7 +35,7 @@ var srcDir = Directory("Src");
 var solution = srcDir + File(projectName + ".sln");
 
 // Debug output.
-Information("Starting build {0} against git branch '{1}'.", version, gitBranch.CanonicalName);
+Information("Starting build {0} against git branch '{1}'.", version, gitBranch);
 
 if (deployRemotely)
 {

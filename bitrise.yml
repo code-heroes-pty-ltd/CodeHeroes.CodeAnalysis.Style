@@ -131,7 +131,7 @@ workflows:
         envs:
         - DEPLOY_REMOTELY: true
         - REMOTE_DEPLOY_SOURCE: "https://www.nuget.org/api/v2/package"
-        - REMOTE_DEPLOY_KEY: "c77fdbb5-46fd-419f-8d15-3539d6dc0bb0"
+        - REMOTE_DEPLOY_KEY: "a6d23d2d-57c0-483e-8d0d-af8240b7b9b9"
         - TAG: true
         before_run:
         - _turnBillOn
