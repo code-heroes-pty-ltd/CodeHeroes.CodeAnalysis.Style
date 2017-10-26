@@ -1,6 +1,8 @@
 #addin "Cake.FileHelpers"
 #addin nuget:?package=Cake.Git
 
+var projectName = "CodeHeroes.CodeAnalysis.Style";
+
 // Versioning.
 var latestReleaseNote = ParseReleaseNotes("./release-notes.md");
 var semanticVersion = latestReleaseNote.Version;
@@ -30,7 +32,6 @@ var msBuildVerbosity = (Verbosity)Enum.Parse(typeof(Verbosity), EnvironmentVaria
 // Paths.
 var genDir = Directory("Gen");
 var srcDir = Directory("Src");
-var projectName = "CodeHeroes.CodeAnalysis.Style";
 var solution = srcDir + File(projectName + ".sln");
 
 // Debug output.
@@ -55,6 +56,7 @@ Task("Clean")
                 new MSBuildSettings
                 {
                     Configuration = configuration,
+                    MaxCpuCount = 0,
                     NoConsoleLogger = true,
                     BinaryLogger = new MSBuildBinaryLogSettings
                     {
@@ -103,6 +105,7 @@ Task("Build")
                 new MSBuildSettings
                 {
                     Configuration = configuration,
+                    MaxCpuCount = 0,
                     NoConsoleLogger = true,
                     BinaryLogger = new MSBuildBinaryLogSettings
                     {

@@ -10,9 +10,6 @@ Gen
 tools/**
 !tools/packages.config
 
-# FAKE
-.fake
-
 # Mac
 .DS_Store
 
