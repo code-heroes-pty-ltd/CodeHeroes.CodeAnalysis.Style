@@ -121,7 +121,7 @@ Task("Build")
             {
                 CopyFile(logFile, localDeployDir + logFile);
 
-                var nupkgFile = File("Analyzers." + nugetVersion + ".nupkg");
+                var nupkgFile = File(projectName + ".Analyzers." + nugetVersion + ".nupkg");
                 var nupkgFullFile = srcDir + Directory("Analyzers") + Directory("bin") + Directory(configuration) + nupkgFile;
 
                 CopyFile(nupkgFullFile, localDeployDir + nupkgFile);
