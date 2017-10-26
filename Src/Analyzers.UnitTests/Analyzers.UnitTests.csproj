@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AssemblyName>Analyzers.UnitTests</AssemblyName>
-        <RootNamespace>Analyzers.UnitTests</RootNamespace>
+        <AssemblyName>CodeHeroes.CodeAnalysis.Style.Analyzers.UnitTests</AssemblyName>
+        <RootNamespace>CodeHeroes.CodeAnalysis.Style.Analyzers.UnitTests</RootNamespace>
         <TargetFrameworks>net46;netstandard1.3</TargetFrameworks>
         <LangVersion>latest</LangVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>

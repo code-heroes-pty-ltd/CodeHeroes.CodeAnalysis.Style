@@ -1,8 +1,9 @@
-﻿namespace Analyzers.UnitTests
+﻿namespace CodeHeroes.CodeAnalysis.Style.Analyzers.UnitTests
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using CodeHeroes.CodeAnalysis.Style.Analyzers;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
