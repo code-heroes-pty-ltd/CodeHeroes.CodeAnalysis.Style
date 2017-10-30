@@ -1,8 +1,8 @@
-﻿using Microsoft.CodeAnalysis;
-using System;
-
-namespace TestHelper
+﻿namespace CodeHeroes.CodeAnalysis.Style.UnitTests.TestHelper
 {
+    using System;
+    using Microsoft.CodeAnalysis;
+
     /// <summary>
     /// Location where the diagnostic appears, as determined by path, line number, and column number.
     /// </summary>

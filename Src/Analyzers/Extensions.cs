@@ -1,4 +1,4 @@
-﻿namespace CodeHeroes.CodeAnalysis.Style.Analyzers
+﻿namespace CodeHeroes.CodeAnalysis.Style
 {
     using System.Diagnostics;
 

@@ -121,7 +121,7 @@ Task("Build")
             {
                 CopyFile(logFile, localDeployDir + logFile);
 
-                var nupkgFile = File(projectName + ".Analyzers." + nugetVersion + ".nupkg");
+                var nupkgFile = File(projectName + "." + nugetVersion + ".nupkg");
                 var nupkgFullFile = srcDir + Directory("Analyzers") + Directory("bin") + Directory(configuration) + nupkgFile;
 
                 CopyFile(nupkgFullFile, localDeployDir + nupkgFile);
@@ -133,7 +133,7 @@ Task("Test")
     .Does(
         () =>
         {
-            var testAssemblies = GetFiles(srcDir + Directory("Analyzers.UnitTests/bin/") + Directory(configuration) + Directory("net46") + File(projectName + ".Analyzers.UnitTests.dll"));
+            var testAssemblies = GetFiles(srcDir + Directory("UnitTests/bin/") + Directory(configuration) + Directory("net46") + File(projectName + ".UnitTests.dll"));
 
             XUnit2(
                 testAssemblies,
@@ -147,7 +147,7 @@ Task("Test")
 
             if (deployLocally)
             {
-                CopyFiles(GetFiles(genDir.ToString() + "/" + projectName + ".Analyzers.UnitTests.dll.*"), localDeployDir);
+                CopyFiles(GetFiles(genDir.ToString() + "/" + projectName + ".UnitTests.dll.*"), localDeployDir);
             }
         });
 
@@ -185,7 +185,7 @@ Task("Deploy")
                 throw new Exception("No remote deploy key set.");
             }
 
-            var nupkgFile = File(projectName + ".Analyzers." + nugetVersion + ".nupkg");
+            var nupkgFile = File(projectName + "." + nugetVersion + ".nupkg");
             var nupkgFullFile = srcDir + Directory("Analyzers") + Directory("bin") + Directory(configuration) + nupkgFile;
 
             NuGetPush(
