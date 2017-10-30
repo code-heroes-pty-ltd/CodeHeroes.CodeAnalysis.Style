@@ -22,8 +22,11 @@ namespace CodeHeroes.CodeAnalysis.Style.Analyzers
 
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(Rule);
 
-        public override void Initialize(AnalysisContext context) =>
+        public override void Initialize(AnalysisContext context)
+        {
+            context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.RegisterSyntaxTreeAction(AnalyzeWhitespace);
+        }
 
         private static void AnalyzeWhitespace(SyntaxTreeAnalysisContext context)
         {
