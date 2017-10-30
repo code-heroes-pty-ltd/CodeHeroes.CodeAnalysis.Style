@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2002
+VisualStudioVersion = 15.0.27004.2005
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzers", "Analyzers\Analyzers.csproj", "{F6129CD2-60AD-4EEF-81D9-FCB19BBDEBD9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Analyzers", "Analyzers\Analyzers.csproj", "{F6129CD2-60AD-4EEF-81D9-FCB19BBDEBD9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzers.UnitTests", "Analyzers.UnitTests\Analyzers.UnitTests.csproj", "{31E47979-435B-45CF-BACF-9A6F23638182}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{31E47979-435B-45CF-BACF-9A6F23638182}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzers.Vsix", "Analyzers.Vsix\Analyzers.Vsix.csproj", "{21D61959-7F6B-49AB-8662-FD0C715142D7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vsix", "Vsix\Vsix.csproj", "{21D61959-7F6B-49AB-8662-FD0C715142D7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Platform", "Platform", "{FB08455B-5BC5-4220-8B30-3D9F5BF95829}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{21D61959-7F6B-49AB-8662-FD0C715142D7} = {FB08455B-5BC5-4220-8B30-3D9F5BF95829}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {5D1DB7FA-B6F9-424F-8D57-0B7031905F76}
