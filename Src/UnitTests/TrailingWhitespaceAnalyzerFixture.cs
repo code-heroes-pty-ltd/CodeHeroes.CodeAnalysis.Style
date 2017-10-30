@@ -1,13 +1,12 @@
-﻿namespace CodeHeroes.CodeAnalysis.Style.Analyzers.UnitTests
+﻿namespace CodeHeroes.CodeAnalysis.Style.UnitTests
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using CodeHeroes.CodeAnalysis.Style.Analyzers;
+    using CodeHeroes.CodeAnalysis.Style.UnitTests.TestHelper;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
-    using TestHelper;
     using Xunit;
 
     // TODO: ADD SUPPORT FOR DOC COMMENTS (STARTING WITH /** and ///)

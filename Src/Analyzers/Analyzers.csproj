@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AssemblyName>CodeHeroes.CodeAnalysis.Style.Analyzers</AssemblyName>
-        <RootNamespace>CodeHeroes.CodeAnalysis.Style.Analyzers</RootNamespace>
+        <AssemblyName>CodeHeroes.CodeAnalysis.Style</AssemblyName>
+        <RootNamespace>CodeHeroes.CodeAnalysis.Style</RootNamespace>
         <TargetFramework>netstandard1.3</TargetFramework>
         <LangVersion>latest</LangVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <PackageId>CodeHeroes.CodeAnalysis.Style.Analyzers</PackageId>
+        <PackageId>CodeHeroes.CodeAnalysis.Style</PackageId>
         <Version>1.0.0</Version>
         <Authors>Code Heroes</Authors>
         <Company>Code Heroes</Company>
