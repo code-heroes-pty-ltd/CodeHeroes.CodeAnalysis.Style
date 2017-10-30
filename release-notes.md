@@ -1,11 +1,16 @@
+## New in 0.0.5 (Released October 31st, 2017)
+* fix: ignore generated code
+* chore: rename to CodeHeroes.CodeAnalysis.Style
+* chore: regenerate API keys and remove them from source
+
 ## New in 0.0.4 (Released October 26th, 2017)
-* fix NuGet package to not contain binaries in lib directory
+* fix: remove binaries from lib directory in NuGet package
 
 ## New in 0.0.3 (Released October 26th, 2017)
-* fix analyzers in non-SDK-style csproj
+* fix: allow analyzers to be installed in non-SDK-style csproj
 
 ## New in 0.0.2 (Released October 26th, 2017)
-* trailing whitespace visualizer
+* feature: trailing whitespace visualizer
 
 ## New in 0.0.1 (Released October 23rd, 2017)
-* initial test release
+* chore: initial test release
