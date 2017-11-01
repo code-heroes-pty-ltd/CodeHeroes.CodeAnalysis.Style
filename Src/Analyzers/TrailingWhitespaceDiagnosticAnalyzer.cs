@@ -10,7 +10,7 @@ namespace CodeHeroes.CodeAnalysis.Style
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public sealed class TrailingWhitespaceDiagnosticAnalyzer : DiagnosticAnalyzer
     {
-        public const string DiagnosticId = "TrailingWhitespace";
+        public const string DiagnosticId = "CH0001";
 
         private static DiagnosticDescriptor Rule = new DiagnosticDescriptor(
             DiagnosticId,

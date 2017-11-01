@@ -1,6 +1,6 @@
-﻿using System;
-
+﻿
 namespace Foo
 {
     using System.Collections;
+    using Genesis.Ensure;
 }

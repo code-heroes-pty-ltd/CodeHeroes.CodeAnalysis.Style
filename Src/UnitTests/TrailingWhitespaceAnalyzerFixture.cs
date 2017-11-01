@@ -64,7 +64,7 @@ public class Foo : Bar
                     lineInfo =>
                         new DiagnosticResult
                         {
-                            Id = "TrailingWhitespace",
+                            Id = "CH0001",
                             Message = "Remove trailing whitespace. Whilst this analyzer includes a code fix provider, it is recommended you install the Trailing Whitespace Visualizer add-in to automatically remove all trailing whitespace. See https://marketplace.visualstudio.com/items?itemName=MadsKristensen.TrailingWhitespaceVisualizer.",
                             Severity = DiagnosticSeverity.Warning,
                             Locations = new[]
