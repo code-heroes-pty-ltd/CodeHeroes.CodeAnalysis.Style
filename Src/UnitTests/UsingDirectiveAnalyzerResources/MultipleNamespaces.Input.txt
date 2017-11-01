@@ -2,5 +2,8 @@
 
 namespace Foo
 {
-    using System.Collections;
+}
+
+namespace Bar
+{
 }
