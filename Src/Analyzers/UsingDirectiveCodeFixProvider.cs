@@ -1,5 +1,6 @@
 ﻿namespace CodeHeroes.CodeAnalysis.Style
 {
+    using System.Collections.Generic;
     using System.Collections.Immutable;
     using System.Composition;
     using System.Linq;
@@ -16,9 +17,10 @@
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UsingDirectiveCodeFixProvider))]
     public sealed class UsingDirectiveCodeFixProvider : CodeFixProvider
     {
-        private const string title = "Move using directive";
+        private const string ch0002Title = "Move using directive";
+        private const string ch0003Title = "Sort using directives";
 
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(UsingDirectiveDiagnosticAnalyzer.UsingsWithinNamespaceDiagnosticId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(UsingDirectiveDiagnosticAnalyzer.UsingsWithinNamespaceDiagnosticId, UsingDirectiveDiagnosticAnalyzer.UsingsSortedCorrectlyDiagnosticId);
 
         public sealed override FixAllProvider GetFixAllProvider() =>
             WellKnownFixAllProviders.BatchFixer;
@@ -29,20 +31,39 @@
 
             var diagnostic = context.Diagnostics.Single();
             var diagnosticSpan = diagnostic.Location.SourceSpan;
-            var usingDirectiveNode = root.FindNode(diagnosticSpan);
-            var namespaceNode = root
-                .DescendantNodes(node => !node.IsKind(SyntaxKind.NamespaceDeclaration))
-                .Where(node => node.IsKind(SyntaxKind.NamespaceDeclaration))
-                .FirstOrDefault();
 
-            if (namespaceNode != null)
+            if (diagnostic.Id == UsingDirectiveDiagnosticAnalyzer.UsingsWithinNamespaceDiagnosticId)
             {
-                context.RegisterCodeFix(
-                    CodeAction.Create(
-                        title: title,
-                        createChangedSolution: ct => MoveUsingDirectiveAsync(context.Document, (UsingDirectiveSyntax)usingDirectiveNode, (NamespaceDeclarationSyntax)namespaceNode, ct),
-                        equivalenceKey: title),
-                    diagnostic);
+                var usingDirectiveNode = root.FindNode(diagnosticSpan);
+                var namespaceNode = root
+                    .DescendantNodes(node => !node.IsKind(SyntaxKind.NamespaceDeclaration))
+                    .Where(node => node.IsKind(SyntaxKind.NamespaceDeclaration))
+                    .FirstOrDefault();
+
+                if (namespaceNode != null)
+                {
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            title: ch0002Title,
+                            createChangedSolution: ct => MoveUsingDirectiveAsync(context.Document, (UsingDirectiveSyntax)usingDirectiveNode, (NamespaceDeclarationSyntax)namespaceNode, ct),
+                            equivalenceKey: ch0002Title),
+                        diagnostic);
+                }
+            }
+            else if (diagnostic.Id == UsingDirectiveDiagnosticAnalyzer.UsingsSortedCorrectlyDiagnosticId)
+            {
+                var node = root.FindNode(diagnosticSpan);
+                var parentNode = node.Parent;
+
+                if (parentNode != null)
+                {
+                    context.RegisterCodeFix(
+                        CodeAction.Create(
+                            title: ch0003Title,
+                            createChangedSolution: ct => SortUsingDirectivesAsync(context.Document, parentNode, ct),
+                            equivalenceKey: ch0003Title),
+                        diagnostic);
+                }
             }
         }
 
@@ -74,6 +95,45 @@
             }
 
             return index;
+        }
+
+        private async Task<Solution> SortUsingDirectivesAsync(Document document, SyntaxNode parentNode, CancellationToken cancellationToken)
+        {
+            var isCompilationUnit = parentNode.IsKind(SyntaxKind.CompilationUnit);
+            SyntaxList<UsingDirectiveSyntax> usingDirectives;
+
+            if (isCompilationUnit)
+            {
+                usingDirectives = ((CompilationUnitSyntax)parentNode).Usings;
+            }
+            else
+            {
+                usingDirectives = ((NamespaceDeclarationSyntax)parentNode).Usings;
+            }
+
+            var usingDirectivesList = new List<UsingDirectiveSyntax>(usingDirectives);
+            usingDirectivesList.Sort(UsingDirectiveComparer.Instance);
+            usingDirectives = new SyntaxList<UsingDirectiveSyntax>().AddRange(usingDirectivesList);
+
+            SyntaxNode newParentNode;
+
+            if (isCompilationUnit)
+            {
+                newParentNode = ((CompilationUnitSyntax)parentNode).WithUsings(usingDirectives);
+            }
+            else
+            {
+                newParentNode = ((NamespaceDeclarationSyntax)parentNode).WithUsings(usingDirectives);
+            }
+
+            var root = await document.GetSyntaxRootAsync();
+            var newRoot = root.ReplaceNode(parentNode, newParentNode);
+
+            var formattedRoot = Formatter.Format(newRoot, document.Project.Solution.Workspace);
+
+            var newDocument = document.WithSyntaxRoot(formattedRoot);
+
+            return newDocument.Project.Solution;
         }
     }
 }
