@@ -61,6 +61,20 @@ namespace Fiz
             this.VerifyCSharpDiagnostic(source, expected);
         }
 
+        [Fact]
+        public void ch0004_does_not_flag_multiple_namespaces_in_different_files()
+        {
+            var source1 = @"
+namespace Foo
+{
+}";
+            var source2 = @"
+namespace Bar
+{
+}";
+            this.VerifyCSharpDiagnostic(new[] { source1, source2 }, new DiagnosticResult[0]);
+        }
+
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() =>
             new NamespaceDiagnosticAnalyzer();
     }
