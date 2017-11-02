@@ -33,4 +33,8 @@
       <ProjectReference Include="..\Analyzers\Analyzers.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Resources\CH0004\" />
+    </ItemGroup>
+
 </Project>
