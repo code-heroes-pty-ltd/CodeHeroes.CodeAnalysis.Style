@@ -1,10 +1,6 @@
 ﻿namespace CodeHeroes.CodeAnalysis.Style.UnitTests
 {
-    using System;
     using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-    using System.Reflection;
     using CodeHeroes.CodeAnalysis.Style.UnitTests.TestHelper;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
@@ -50,7 +46,7 @@ namespace Foo
         }
 
         [Theory]
-        [MemberData(nameof(GetCH0002Sources))]
+        [MemberData(nameof(CH0002Sources))]
         public void ch0002_allows_using_directives_outside_namespace_to_be_fixed(string input, string output)
         {
             this.VerifyCSharpFix(input, output);
@@ -107,7 +103,7 @@ namespace Foo
         }
 
         [Theory]
-        [MemberData(nameof(GetCH0003Sources))]
+        [MemberData(nameof(CH0003Sources))]
         public void ch0003_allows_using_directive_sort_order_to_be_fixed(string input, string output)
         {
             this.VerifyCSharpFix(input, output);
@@ -119,59 +115,22 @@ namespace Foo
         protected override CodeFixProvider GetCSharpCodeFixProvider() =>
             new UsingDirectiveCodeFixProvider();
 
-        public static IEnumerable<object[]> GetCH0002Sources() =>
-            GetArgumentsFor("CH0002", CH0002ResourceNamePrefixes);
+        public static IEnumerable<object[]> CH0002Sources =>
+            GetInputsAndOutputsFromResources(
+                UsingDirectiveDiagnosticAnalyzer.UsingsWithinNamespaceDiagnosticId,
+                "Degenerate",
+                "MisplacedNonSystemUsing",
+                "MisplacedSystemUsing",
+                "MisplacedSystemUsing2",
+                "MultipleNamespaces",
+                "NoNamespace");
 
-        private static IEnumerable<string> CH0002ResourceNamePrefixes
-        {
-            get
-            {
-                yield return "Degenerate";
-                yield return "MisplacedNonSystemUsing";
-                yield return "MisplacedSystemUsing";
-                yield return "MisplacedSystemUsing2";
-                yield return "MultipleNamespaces";
-                yield return "NoNamespace";
-            }
-        }
-
-        public static IEnumerable<object[]> GetCH0003Sources() =>
-            GetArgumentsFor("CH0003", CH0003ResourceNamePrefixes);
-
-        private static IEnumerable<string> CH0003ResourceNamePrefixes
-        {
-            get
-            {
-                yield return "Degenerate";
-                yield return "SystemUsings";
-                yield return "SystemUsingsInCompilationUnit";
-                yield return "NonSystemUsings";
-            }
-        }
-
-        private static IEnumerable<object[]> GetArgumentsFor(string id, IEnumerable<string> resourceNamePrefixes)
-        {
-            foreach (var resourceNamePrefix in resourceNamePrefixes)
-            {
-                var prefix = "CodeHeroes.CodeAnalysis.Style.UnitTests.Resources." + id + "." + resourceNamePrefix;
-
-                using (var inputStream = typeof(UsingDirectiveAnalyzerFixture).GetTypeInfo().Assembly.GetManifestResourceStream(prefix + ".Input.txt"))
-                using (var outputStream = typeof(UsingDirectiveAnalyzerFixture).GetTypeInfo().Assembly.GetManifestResourceStream(prefix + ".Output.txt"))
-                using (var inputStreamReader = new StreamReader(inputStream))
-                using (var outputStreamReader = new StreamReader(outputStream))
-                {
-                    var input = inputStreamReader.ReadToEnd();
-                    var output = outputStreamReader.ReadToEnd();
-                    var normalizedInput = input
-                        .Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
-                        .Join("\r\n");
-                    var normalizedOutput = output
-                        .Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
-                        .Join("\r\n");
-
-                    yield return new object[] { normalizedInput, normalizedOutput };
-                }
-            }
-        }
+        public static IEnumerable<object[]> CH0003Sources =>
+            GetInputsAndOutputsFromResources(
+                UsingDirectiveDiagnosticAnalyzer.UsingsSortedCorrectlyDiagnosticId,
+                "Degenerate",
+                "SystemUsings",
+                "SystemUsingsInCompilationUnit",
+                "NonSystemUsings");
     }
 }
