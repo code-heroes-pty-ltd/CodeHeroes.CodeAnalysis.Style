@@ -1,7 +1,10 @@
 ﻿namespace CodeHeroes.CodeAnalysis.Style.UnitTests.TestHelper
 {
+    using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
@@ -123,6 +126,31 @@
             //after applying all of the code fixes, compare the resulting string to the inputted one
             var actual = GetStringFromDocument(document);
             Assert.Equal(newSource, actual);
+        }
+
+        protected static IEnumerable<object[]> GetInputsAndOutputsFromResources(string diagnosticsId, params string[] resourceNamePrefixes)
+        {
+            foreach (var resourceNamePrefix in resourceNamePrefixes)
+            {
+                var prefix = "CodeHeroes.CodeAnalysis.Style.UnitTests.Resources." + diagnosticsId + "." + resourceNamePrefix;
+
+                using (var inputStream = typeof(UsingDirectiveAnalyzerFixture).GetTypeInfo().Assembly.GetManifestResourceStream(prefix + ".Input.txt"))
+                using (var outputStream = typeof(UsingDirectiveAnalyzerFixture).GetTypeInfo().Assembly.GetManifestResourceStream(prefix + ".Output.txt"))
+                using (var inputStreamReader = new StreamReader(inputStream))
+                using (var outputStreamReader = new StreamReader(outputStream))
+                {
+                    var input = inputStreamReader.ReadToEnd();
+                    var output = outputStreamReader.ReadToEnd();
+                    var normalizedInput = input
+                        .Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
+                        .Join("\r\n");
+                    var normalizedOutput = output
+                        .Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
+                        .Join("\r\n");
+
+                    yield return new object[] { normalizedInput, normalizedOutput };
+                }
+            }
         }
     }
 }
