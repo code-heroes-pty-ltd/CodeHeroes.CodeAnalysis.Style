@@ -1,12 +1,13 @@
 ﻿namespace Foo
 {
     using System;
-    using System.Linq;
     using System.Collections;
     using System.Diagnostics;
-    using Genesis.Ensure;
     using System.IO;
-    using Xxx = System.Xml;
-    using Genesis.Join;
+    using System.Linq;
     using Genesis.AsyncInitializationGuard;
+    using Genesis.Ensure;
+    using Genesis.Join;
+    using Aaa = System.Xml.XPath;
+    using Xxx = System.Xml;
 }

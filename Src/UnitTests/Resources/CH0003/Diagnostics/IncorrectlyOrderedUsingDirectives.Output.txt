@@ -37,5 +37,18 @@
                 "column": 5
             }
         ]
+    },
+    {
+        "Id": "CH0003",
+        "Message": "Sort using directives in alphabetical order, with System usings first.",
+        "Severity": "Warning",
+        "Locations":
+        [
+            {
+                "path": "Test0.cs",
+                "line": 10,
+                "column": 5
+            }
+        ]
     }
 ]

@@ -16,6 +16,14 @@
         {
             var xName = x.Name.ToString();
             var yName = y.Name.ToString();
+            var xIsAliased = IsAliased(x);
+            var yIsAliased = IsAliased(y);
+
+            if (xIsAliased != yIsAliased)
+            {
+                return xIsAliased.CompareTo(yIsAliased);
+            }
+
             var xSegment = IsSystem(xName) ? 0 : 1;
             var ySegment = IsSystem(yName) ? 0 : 1;
 
@@ -24,8 +32,18 @@
                 return xSegment.CompareTo(ySegment);
             }
 
-            return xName.CompareTo(yName);
+            if (xIsAliased)
+            {
+                return x.Alias.Name.ToString().CompareTo(y.Alias.Name.ToString());
+            }
+            else
+            {
+                return xName.CompareTo(yName);
+            }
         }
+
+        private static bool IsAliased(UsingDirectiveSyntax usingDirectiveSyntax) =>
+            usingDirectiveSyntax.Alias != null;
 
         private static bool IsSystem(string usingDirective) =>
             usingDirective.StartsWith("System", StringComparison.Ordinal);
