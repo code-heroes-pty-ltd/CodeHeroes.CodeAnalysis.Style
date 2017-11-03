@@ -1,0 +1,15 @@
+﻿namespace Foo
+{
+    using System;
+    using System.Linq;
+    using System.Collections;
+    using System.Diagnostics;
+    using Xxx = System.Xml;
+    using static System.Math;
+    using Genesis.Ensure;
+    using System.IO;
+    using Aaa = System.Xml.XPath;
+    using static System.DateTime;
+    using Genesis.Join;
+    using Genesis.AsyncInitializationGuard;
+}

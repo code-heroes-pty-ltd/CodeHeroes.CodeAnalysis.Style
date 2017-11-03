@@ -2,6 +2,8 @@
 {
     using System;
     using System.Collections.Generic;
+    using Microsoft.CodeAnalysis;
+    using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
 
     public sealed class UsingDirectiveComparer : IComparer<UsingDirectiveSyntax>
@@ -24,6 +26,14 @@
                 return xIsAliased.CompareTo(yIsAliased);
             }
 
+            var xIsStatic = IsStatic(x);
+            var yIsStatic = IsStatic(y);
+
+            if (xIsStatic != yIsStatic)
+            {
+                return xIsStatic.CompareTo(yIsStatic);
+            }
+
             var xSegment = IsSystem(xName) ? 0 : 1;
             var ySegment = IsSystem(yName) ? 0 : 1;
 
@@ -44,6 +54,9 @@
 
         private static bool IsAliased(UsingDirectiveSyntax usingDirectiveSyntax) =>
             usingDirectiveSyntax.Alias != null;
+
+        private static bool IsStatic(UsingDirectiveSyntax usingDirectiveSyntax) =>
+            !usingDirectiveSyntax.StaticKeyword.IsKind(SyntaxKind.None);
 
         private static bool IsSystem(string usingDirective) =>
             usingDirective.StartsWith("System", StringComparison.Ordinal);
