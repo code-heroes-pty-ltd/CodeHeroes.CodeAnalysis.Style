@@ -26,15 +26,15 @@
         }
 
         public static IEnumerable<object[]> CH0001Diagnostics =>
-            GetDataForDiagnosticVerification(TrailingWhitespaceDiagnosticAnalyzer.DiagnosticId);
+            GetDataForDiagnosticVerification(TrailingWhitespaceAnalyzer.DiagnosticId);
 
         public static IEnumerable<object[]> CH0001Fixes =>
-            GetDataForFixVerification(TrailingWhitespaceDiagnosticAnalyzer.DiagnosticId);
+            GetDataForFixVerification(TrailingWhitespaceAnalyzer.DiagnosticId);
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() =>
-            new TrailingWhitespaceDiagnosticAnalyzer();
+            new TrailingWhitespaceAnalyzer();
 
         protected override CodeFixProvider GetCSharpCodeFixProvider() =>
-            new TrailingWhitespaceCodeFixProvider();
+            new TrailingWhitespaceFix();
     }
 }

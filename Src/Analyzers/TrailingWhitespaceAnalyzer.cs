@@ -8,7 +8,7 @@ namespace CodeHeroes.CodeAnalysis.Style
     using Microsoft.CodeAnalysis.Text;
 
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public sealed class TrailingWhitespaceDiagnosticAnalyzer : DiagnosticAnalyzer
+    public sealed class TrailingWhitespaceAnalyzer : DiagnosticAnalyzer
     {
         public const string DiagnosticId = "CH0001";
 

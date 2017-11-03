@@ -37,21 +37,21 @@
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() =>
-            new UsingDirectiveDiagnosticAnalyzer();
+            new UsingDirectiveAnalyzer();
 
         protected override CodeFixProvider GetCSharpCodeFixProvider() =>
-            new UsingDirectiveCodeFixProvider();
+            new UsingDirectiveFix();
 
         public static IEnumerable<object[]> CH0002Diagnostics =>
-            GetDataForDiagnosticVerification(UsingDirectiveDiagnosticAnalyzer.UsingsWithinNamespaceDiagnosticId);
+            GetDataForDiagnosticVerification(UsingDirectiveAnalyzer.UsingsWithinNamespaceDiagnosticId);
 
         public static IEnumerable<object[]> CH0002Fixes =>
-            GetDataForFixVerification(UsingDirectiveDiagnosticAnalyzer.UsingsWithinNamespaceDiagnosticId);
+            GetDataForFixVerification(UsingDirectiveAnalyzer.UsingsWithinNamespaceDiagnosticId);
 
         public static IEnumerable<object[]> CH0003Diagnostics =>
-            GetDataForDiagnosticVerification(UsingDirectiveDiagnosticAnalyzer.UsingsSortedCorrectlyDiagnosticId);
+            GetDataForDiagnosticVerification(UsingDirectiveAnalyzer.UsingsSortedCorrectlyDiagnosticId);
 
         public static IEnumerable<object[]> CH0003Fixes =>
-            GetDataForFixVerification(UsingDirectiveDiagnosticAnalyzer.UsingsSortedCorrectlyDiagnosticId);
+            GetDataForFixVerification(UsingDirectiveAnalyzer.UsingsSortedCorrectlyDiagnosticId);
     }
 }

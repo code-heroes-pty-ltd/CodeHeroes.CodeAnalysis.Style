@@ -14,13 +14,13 @@
     using Microsoft.CodeAnalysis.Formatting;
 
     [Shared]
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UsingDirectiveCodeFixProvider))]
-    public sealed class UsingDirectiveCodeFixProvider : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(UsingDirectiveFix))]
+    public sealed class UsingDirectiveFix : CodeFixProvider
     {
         private const string ch0002Title = "Move using directive";
         private const string ch0003Title = "Sort using directives";
 
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(UsingDirectiveDiagnosticAnalyzer.UsingsWithinNamespaceDiagnosticId, UsingDirectiveDiagnosticAnalyzer.UsingsSortedCorrectlyDiagnosticId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(UsingDirectiveAnalyzer.UsingsWithinNamespaceDiagnosticId, UsingDirectiveAnalyzer.UsingsSortedCorrectlyDiagnosticId);
 
         public sealed override FixAllProvider GetFixAllProvider() =>
             WellKnownFixAllProviders.BatchFixer;
@@ -32,7 +32,7 @@
             var diagnostic = context.Diagnostics.Single();
             var diagnosticSpan = diagnostic.Location.SourceSpan;
 
-            if (diagnostic.Id == UsingDirectiveDiagnosticAnalyzer.UsingsWithinNamespaceDiagnosticId)
+            if (diagnostic.Id == UsingDirectiveAnalyzer.UsingsWithinNamespaceDiagnosticId)
             {
                 var usingDirectiveNode = root.FindNode(diagnosticSpan);
                 var namespaceNode = root
@@ -50,7 +50,7 @@
                         diagnostic);
                 }
             }
-            else if (diagnostic.Id == UsingDirectiveDiagnosticAnalyzer.UsingsSortedCorrectlyDiagnosticId)
+            else if (diagnostic.Id == UsingDirectiveAnalyzer.UsingsSortedCorrectlyDiagnosticId)
             {
                 var node = root.FindNode(diagnosticSpan);
                 var parentNode = node.Parent;

@@ -15,9 +15,9 @@
         }
 
         public static IEnumerable<object[]> CH0005Diagnostics =>
-            GetDataForDiagnosticVerification(TypeDiagnosticAnalyzer.DiagnosticId);
+            GetDataForDiagnosticVerification(TypeAnalyzer.DiagnosticId);
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() =>
-            new TypeDiagnosticAnalyzer();
+            new TypeAnalyzer();
     }
 }
