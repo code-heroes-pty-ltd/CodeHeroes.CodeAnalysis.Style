@@ -15,7 +15,7 @@ Flags any superfluous trailing whitespace in code, single-line comments, or mult
 
 ## Using Directives within Namespace (`CH0002`)
 
-Flags any using directives that are outside a namespace declaration. Includes an automated fix to move the using directive inside the topmost namespace declaration.
+Flags any using directives that are outside a namespace declaration, assuming a namespace declaration exists in that file. Includes an automated fix to move the using directive inside the topmost namespace declaration.
 
 ## Using Directives Sort Order (`CH0003`)
 

@@ -1,6 +1,7 @@
 ﻿namespace CodeHeroes.CodeAnalysis.Style
 {
     using System.Collections.Immutable;
+    using System.Linq;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CSharp;
     using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -45,6 +46,17 @@
 
             if (!parent.IsKind(SyntaxKind.NamespaceDeclaration))
             {
+                var root = parent.FindRoot();
+                var namespaceNode = root
+                    .DescendantNodes(n => !n.IsKind(SyntaxKind.NamespaceDeclaration))
+                    .Where(n => n.IsKind(SyntaxKind.NamespaceDeclaration))
+                    .FirstOrDefault();
+
+                if (namespaceNode == null)
+                {
+                    return;
+                }
+
                 var diagnostic = Diagnostic.Create(
                     UsingsWithinNamespaceRule,
                     node.GetLocation());

@@ -1,0 +1,11 @@
+﻿class Foo
+{
+    void Bar(int _, float __, double ___)
+    {
+        Baz(__);
+    }
+
+    void Baz(float f)
+    {
+    }
+}
