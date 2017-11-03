@@ -6,6 +6,7 @@
     using System.Diagnostics;
     using Genesis.Ensure;
     using System.IO;
+    using Aaa = System.Xml.XPath;
     using Xxx = System.Xml;
     using Genesis.Join;
     using Genesis.AsyncInitializationGuard;
