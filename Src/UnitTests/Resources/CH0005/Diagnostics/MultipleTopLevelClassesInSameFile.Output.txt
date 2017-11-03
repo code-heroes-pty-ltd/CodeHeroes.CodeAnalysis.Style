@@ -1,0 +1,15 @@
+﻿[
+    {
+        "Id": "CH0005",
+        "Message": "Separate the code into multiple files, or move top-level types to inner types.",
+        "Severity": "Warning",
+        "Locations":
+        [
+            {
+                "path": "Test0.cs",
+                "line": 5,
+                "column": 1
+            }
+        ]
+    }
+]

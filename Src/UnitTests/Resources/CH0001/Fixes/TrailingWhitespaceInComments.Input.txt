@@ -1,0 +1,16 @@
+﻿using System;
+
+namespace Foo
+{
+    // a comment  
+    // hi	
+    public class Bar
+    {
+        /*
+         * A multi-line comment    
+         * Foo	
+         */
+        public int Value =>
+            42;
+    }
+}
