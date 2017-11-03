@@ -1,0 +1,12 @@
+﻿public class Foo
+{
+    public void Bar()
+    {
+        int _;
+        var __ = 42;
+        float ___, ____;
+        const int _____ = 42;
+        int _fine;
+        const int ________totallyOK = 200;
+    }
+}

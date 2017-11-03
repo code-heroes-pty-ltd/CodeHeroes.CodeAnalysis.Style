@@ -1,0 +1,9 @@
+﻿public class Foo
+{
+    int _;
+    const float __ = 42;
+    double ___, ____;
+    private static readonly int ____;
+    int _fine;
+    const int ________totallyOK = 200;
+}
