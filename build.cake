@@ -33,6 +33,8 @@ var msBuildVerbosity = (Verbosity)Enum.Parse(typeof(Verbosity), EnvironmentVaria
 var genDir = Directory("Gen");
 var srcDir = Directory("Src");
 var solution = srcDir + File(projectName + ".sln");
+var cleanLogFile = File("clean.binlog");
+var buildLogFile = File("build.binlog");
 
 // Debug output.
 Information("Starting build {0} against git branch '{1}'.", version, gitBranch);
@@ -49,8 +51,6 @@ Task("Clean")
         {
             CleanDirectories(genDir);
 
-            var logFile = File("clean.binlog");
-
             MSBuild(
                 solution,
                 new MSBuildSettings
@@ -61,17 +61,13 @@ Task("Clean")
                     BinaryLogger = new MSBuildBinaryLogSettings
                     {
                         Enabled = true,
-                        FileName = logFile
+                        FileName = cleanLogFile
                     },
                     Verbosity = msBuildVerbosity
                 }
                 .WithTarget("Clean"));
-            
-            if (deployLocally)
-            {
-                CopyFile(logFile, localDeployDir + logFile);
-            }
-        });
+        })
+    .Finally(() => DeployLocally(cleanLogFile));
 
 Task("Build")
     .IsDependentOn("Clean")
@@ -98,8 +94,6 @@ Task("Build")
                     WorkingDirectory = srcDir
                 });
 
-            var logFile = File("build.binlog");
-
             MSBuild(
                 solution,
                 new MSBuildSettings
@@ -110,23 +104,19 @@ Task("Build")
                     BinaryLogger = new MSBuildBinaryLogSettings
                     {
                         Enabled = true,
-                        FileName = logFile
+                        FileName = buildLogFile
                     },
                     Verbosity = msBuildVerbosity
                 }
                 .WithProperty("Version", nugetVersion)
                 .WithTarget("Build"));
             
-            if (deployLocally)
-            {
-                CopyFile(logFile, localDeployDir + logFile);
+            var nupkgFile = File(projectName + "." + nugetVersion + ".nupkg");
+            var nupkgFullFile = srcDir + Directory("Analyzers") + Directory("bin") + Directory(configuration) + nupkgFile;
 
-                var nupkgFile = File(projectName + "." + nugetVersion + ".nupkg");
-                var nupkgFullFile = srcDir + Directory("Analyzers") + Directory("bin") + Directory(configuration) + nupkgFile;
-
-                CopyFile(nupkgFullFile, localDeployDir + nupkgFile);
-            }
-        });
+            DeployLocally(nupkgFullFile, nupkgFile);
+        })
+    .Finally(() => DeployLocally(buildLogFile));
 
 Task("Test")
     .IsDependentOn("Build")
@@ -199,6 +189,16 @@ Task("Deploy")
 
 Task("Default")
     .IsDependentOn("Deploy");
+
+private void DeployLocally(ConvertableFilePath sourceFile, ConvertableFilePath targetFile = null)
+{
+    if (deployLocally)
+    {
+        var targetPath = localDeployDir + (targetFile ?? sourceFile);
+        Information("Copying file '{0}' to '{1}'.", sourceFile, targetPath);
+        CopyFile(sourceFile, targetPath);
+    }
+}
 
 CreateDirectory(genDir);
 

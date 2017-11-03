@@ -49,32 +49,53 @@
 
                 foreach (var variable in node.Variables)
                 {
-                    if (IsInvalidName(variable.Identifier.ToString()))
-                    {
-                        var diagnostic = Diagnostic.Create(
-                            Rule,
-                            variable.GetLocation());
-                        this.context.ReportDiagnostic(diagnostic);
-                    }
+                    this.VisitName(variable.Identifier);
                 }
             }
 
             public override void VisitMemberAccessExpression(MemberAccessExpressionSyntax node)
             {
                 base.VisitMemberAccessExpression(node);
+                this.VisitExpression(node.Expression);
+            }
 
-                if (!(node.Expression is IdentifierNameSyntax))
+            public override void VisitConditionalAccessExpression(ConditionalAccessExpressionSyntax node)
+            {
+                base.VisitConditionalAccessExpression(node);
+                this.VisitExpression(node.Expression);
+            }
+
+            public override void VisitArgument(ArgumentSyntax node)
+            {
+                base.VisitArgument(node);
+                this.VisitExpression(node.Expression);
+            }
+
+            public override void VisitBinaryExpression(BinaryExpressionSyntax node)
+            {
+                base.VisitBinaryExpression(node);
+                this.VisitExpression(node.Left);
+                this.VisitExpression(node.Right);
+            }
+
+            private void VisitExpression(ExpressionSyntax node)
+            {
+                if (!(node is IdentifierNameSyntax))
                 {
                     return;
                 }
 
-                var identifierNameSyntax = (IdentifierNameSyntax)node.Expression;
+                var identifierNameSyntax = (IdentifierNameSyntax)node;
+                this.VisitName(identifierNameSyntax.Identifier);
+            }
 
-                if (IsInvalidName(identifierNameSyntax.Identifier.ToString()))
+            private void VisitName(SyntaxToken name)
+            {
+                if (IsInvalidName(name.ToString()))
                 {
                     var diagnostic = Diagnostic.Create(
                         Rule,
-                        identifierNameSyntax.Identifier.GetLocation());
+                        name.GetLocation());
                     this.context.ReportDiagnostic(diagnostic);
                 }
             }

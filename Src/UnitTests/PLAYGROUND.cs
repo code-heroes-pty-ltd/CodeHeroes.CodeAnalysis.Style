@@ -1,23 +1,33 @@
-﻿//using System;
-
-//class Foo
+﻿//namespace System.Reactive.Linq
 //{
-//    void Bar()
+//    using System;
+//    using Genesis.Ensure;
+
+//    public static class WhereExtensions
 //    {
-//        Func<string, int> valid = _ => 42;
-//        Func<string, int> invalid = _ => _.Length;
-
-//        Func<string, string, string, int> valid2 = (_, __, ___, ____) => 42;
-//        Func<string, string, string, int> invalid2 = (a, b, c, _) => _.Length;
-
-//        Func<string, int> invalid3 = _ =>
+//        public static IObservable<T> WhereNotNull<T>(this IObservable<T> @this)
+//            where T : class
 //        {
-//            if (DateTime.Now.Year == 2017)
-//            {
-//                return _.Length;
-//            }
+//            Ensure.ArgumentNotNull(@this, nameof(@this));
 
-//            return 32;
-//        };
+//            return @this
+//                .Where(_ => _ != null);
+//        }
+
+//        public static IObservable<bool> WhereTrue(this IObservable<bool> @this)
+//        {
+//            Ensure.ArgumentNotNull(@this, nameof(@this));
+
+//            return @this
+//                .Where(item => item);
+//        }
+
+//        public static IObservable<bool> WhereFalse(this IObservable<bool> @this)
+//        {
+//            Ensure.ArgumentNotNull(@this, nameof(@this));
+
+//            return @this
+//                .Where(item => !item);
+//        }
 //    }
 //}

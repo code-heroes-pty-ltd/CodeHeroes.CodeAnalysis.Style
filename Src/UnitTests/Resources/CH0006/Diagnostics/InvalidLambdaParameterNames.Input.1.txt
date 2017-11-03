@@ -10,7 +10,9 @@ class Foo
         Func<string, string, string, int> valid2 = (_, __, ___, ____) => 42;
         Func<string, string, string, int> invalid2 = (a, b, c, _) => _.Length;
 
-        Func<string, int> invalid3 = _ =>
+        Func<string, int> invalid3 = _ => _?.Length;
+
+        Func<string, int> invalid4 = _ =>
         {
             if (DateTime.Now.Year == 2017)
             {
@@ -19,5 +21,8 @@ class Foo
 
             return 32;
         };
+
+        Func<string, bool> invalid5 = _ => _ == null;
+        Func<string, bool> invalid6 = _ => null == _;
     }
 }
