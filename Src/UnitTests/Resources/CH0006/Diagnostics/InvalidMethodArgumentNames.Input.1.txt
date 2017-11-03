@@ -1,0 +1,7 @@
+﻿class Foo
+{
+    int Bar(int _, string __)
+    {
+        return __.Length;
+    }
+}
