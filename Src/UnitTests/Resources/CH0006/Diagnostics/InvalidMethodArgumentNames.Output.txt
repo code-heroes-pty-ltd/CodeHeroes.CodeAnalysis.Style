@@ -1,0 +1,15 @@
+﻿[
+    {
+        "Id": "CH0006",
+        "Message": "Do not use the identifier, or rename it.",
+        "Severity": "Warning",
+        "Locations":
+        [
+            {
+                "path": "Test0.cs",
+                "line": 5,
+                "column": 16
+            }
+        ]
+    }
+]

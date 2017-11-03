@@ -6,6 +6,7 @@
     /// <summary>
     /// Location where the diagnostic appears, as determined by path, line number, and column number.
     /// </summary>
+    [Serializable]
     public struct DiagnosticResultLocation
     {
         public DiagnosticResultLocation(string path, int line, int column)
@@ -33,6 +34,7 @@
     /// <summary>
     /// Struct that stores information about a Diagnostic appearing in a source
     /// </summary>
+    [Serializable]
     public struct DiagnosticResult
     {
         private DiagnosticResultLocation[] locations;

@@ -1,0 +1,12 @@
+﻿namespace Foo
+{
+    using System;
+    using System.Linq;
+    using System.Collections;
+    using System.Diagnostics;
+    using Genesis.Ensure;
+    using System.IO;
+    using Xxx = System.Xml;
+    using Genesis.Join;
+    using Genesis.AsyncInitializationGuard;
+}

@@ -1,0 +1,7 @@
+﻿enum Foo
+{
+}
+
+enum Bar
+{
+}

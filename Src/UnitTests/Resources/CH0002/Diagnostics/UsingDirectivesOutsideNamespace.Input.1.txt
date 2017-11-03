@@ -1,0 +1,7 @@
+﻿using System;
+using System.Collections;
+
+namespace Foo
+{
+    using System.Linq;
+}

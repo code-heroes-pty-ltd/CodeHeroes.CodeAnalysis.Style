@@ -1,0 +1,9 @@
+﻿namespace Foo
+{
+    using System;
+    using System.Collections;
+    using System.IO;
+    using System.Linq;
+    using static System.DateTime;
+    using static System.Math;
+}

@@ -1,0 +1,28 @@
+﻿[
+    {
+        "Id": "CH0002",
+        "Message": "Move the using directive within the namespace scope.",
+        "Severity": "Warning",
+        "Locations":
+        [
+            {
+                "path": "Test0.cs",
+                "line": 1,
+                "column": 1
+            }
+        ]
+    },
+    {
+        "Id": "CH0002",
+        "Message": "Move the using directive within the namespace scope.",
+        "Severity": "Warning",
+        "Locations":
+        [
+            {
+                "path": "Test0.cs",
+                "line": 2,
+                "column": 1
+            }
+        ]
+    }
+]

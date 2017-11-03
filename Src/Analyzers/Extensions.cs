@@ -1,6 +1,7 @@
 ﻿namespace CodeHeroes.CodeAnalysis.Style
 {
     using System.Diagnostics;
+    using Microsoft.CodeAnalysis;
 
     public static class Extensions
     {
@@ -27,6 +28,18 @@
             }
 
             return count;
+        }
+
+        public static SyntaxNode FindRoot(this SyntaxNode @this)
+        {
+            Debug.Assert(@this != null);
+
+            while (@this.Parent != null)
+            {
+                @this = @this.Parent;
+            }
+
+            return @this;
         }
     }
 }

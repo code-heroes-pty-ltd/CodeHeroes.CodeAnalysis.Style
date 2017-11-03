@@ -1,0 +1,10 @@
+﻿class Bar
+{
+    class Foo {}
+
+    interface IFoo {}
+
+    struct SFoo {}
+
+    enum EFoo {}
+}

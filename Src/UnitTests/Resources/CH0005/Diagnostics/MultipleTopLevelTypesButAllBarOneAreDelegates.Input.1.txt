@@ -1,0 +1,7 @@
+﻿delegate void SomeDelegate1(int i);
+
+delegate void SomeDelegate2(float f);
+
+class Bar
+{
+}

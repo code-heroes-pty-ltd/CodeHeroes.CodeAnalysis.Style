@@ -1,0 +1,67 @@
+﻿[
+    {
+        "Id": "CH0006",
+        "Message": "Do not use the identifier, or rename it.",
+        "Severity": "Warning",
+        "Locations":
+        [
+            {
+                "path": "Test0.cs",
+                "line": 3,
+                "column": 9
+            }
+        ]
+    },
+    {
+        "Id": "CH0006",
+        "Message": "Do not use the identifier, or rename it.",
+        "Severity": "Warning",
+        "Locations":
+        [
+            {
+                "path": "Test0.cs",
+                "line": 4,
+                "column": 17
+            }
+        ]
+    },
+    {
+        "Id": "CH0006",
+        "Message": "Do not use the identifier, or rename it.",
+        "Severity": "Warning",
+        "Locations":
+        [
+            {
+                "path": "Test0.cs",
+                "line": 5,
+                "column": 12
+            }
+        ]
+    },
+    {
+        "Id": "CH0006",
+        "Message": "Do not use the identifier, or rename it.",
+        "Severity": "Warning",
+        "Locations":
+        [
+            {
+                "path": "Test0.cs",
+                "line": 5,
+                "column": 17
+            }
+        ]
+    },
+    {
+        "Id": "CH0006",
+        "Message": "Do not use the identifier, or rename it.",
+        "Severity": "Warning",
+        "Locations":
+        [
+            {
+                "path": "Test0.cs",
+                "line": 6,
+                "column": 33
+            }
+        ]
+    }
+]

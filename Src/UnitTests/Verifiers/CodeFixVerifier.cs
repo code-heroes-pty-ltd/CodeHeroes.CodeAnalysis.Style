@@ -1,13 +1,17 @@
 ﻿namespace CodeHeroes.CodeAnalysis.Style.UnitTests.TestHelper
 {
+    using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
+    using System.Reflection;
     using System.Threading;
     using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeActions;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Microsoft.CodeAnalysis.Formatting;
+    using Newtonsoft.Json;
     using Xunit;
 
     /// <summary>
@@ -124,5 +128,88 @@
             var actual = GetStringFromDocument(document);
             Assert.Equal(newSource, actual);
         }
+
+        // Get input source(s) and diagnostic results to be passed through to a call VerifyCSharpDiagnostic. Data is read from resources.
+        protected static IEnumerable<object[]> GetDataForDiagnosticVerification(string diagnosticsId)
+        {
+            var resourceNamePrefix = "CodeHeroes.CodeAnalysis.Style.UnitTests.Resources." + diagnosticsId + ".Diagnostics.";
+            var assembly = typeof(UsingDirectiveAnalyzerFixture).GetTypeInfo().Assembly;
+            var allResourceNames = assembly.GetManifestResourceNames();
+            var resourcesNamesForDiagnostic = allResourceNames
+                .Where(resourceName => resourceName.StartsWith(resourceNamePrefix));
+            var resourceIds = resourcesNamesForDiagnostic
+                .Select(resourceName => resourceName.Substring(resourceNamePrefix.Length))
+                .Select(resourcePart => resourcePart.Substring(0, resourcePart.IndexOf(".")))
+                .Distinct()
+                .ToList();
+
+            foreach (var resourceId in resourceIds)
+            {
+                var resourcePrefix = resourceNamePrefix + resourceId;
+                var sources = new List<string>();
+                var sourceIndex = 1;
+
+                while (allResourceNames.Contains(resourcePrefix + ".Input." + sourceIndex + ".txt"))
+                {
+                    using (var inputStream = assembly.GetManifestResourceStream(resourcePrefix + ".Input." + sourceIndex + ".txt"))
+                    using (var inputStreamReader = new StreamReader(inputStream))
+                    {
+                        var input = inputStreamReader.ReadToEnd();
+                        var normalizedInput = NormalizeLineEndings(input);
+
+                        sources.Add(input);
+                    }
+
+                    ++sourceIndex;
+                }
+
+                using (var outputStream = assembly.GetManifestResourceStream(resourcePrefix + ".Output.txt"))
+                using (var outputStreamReader = new StreamReader(outputStream))
+                {
+                    var output = outputStreamReader.ReadToEnd();
+                    var diagnosticResults = JsonConvert.DeserializeObject<DiagnosticResult[]>(output);
+
+                    yield return new object[] { sources.ToArray(), diagnosticResults };
+                }
+            }
+        }
+
+        // Get input and output sources to be passed through to a call VerifyCSharpFix. Data is read from resources.
+        protected static IEnumerable<object[]> GetDataForFixVerification(string diagnosticsId)
+        {
+            var resourceNamePrefix = "CodeHeroes.CodeAnalysis.Style.UnitTests.Resources." + diagnosticsId + ".Fixes.";
+            var assembly = typeof(UsingDirectiveAnalyzerFixture).GetTypeInfo().Assembly;
+            var allResourceNames = assembly.GetManifestResourceNames();
+            var resourcesNamesForDiagnostic = allResourceNames
+                .Where(resourceName => resourceName.StartsWith(resourceNamePrefix));
+            var resourceIds = resourcesNamesForDiagnostic
+                .Select(resourceName => resourceName.Substring(resourceNamePrefix.Length))
+                .Select(resourcePart => resourcePart.Substring(0, resourcePart.IndexOf(".")))
+                .Distinct()
+                .ToList();
+
+            foreach (var resourceId in resourceIds)
+            {
+                var resourcePrefix = resourceNamePrefix + resourceId;
+
+                using (var inputStream = assembly.GetManifestResourceStream(resourcePrefix + ".Input.txt"))
+                using (var outputStream = assembly.GetManifestResourceStream(resourcePrefix + ".Output.txt"))
+                using (var inputStreamReader = new StreamReader(inputStream))
+                using (var outputStreamReader = new StreamReader(outputStream))
+                {
+                    var input = inputStreamReader.ReadToEnd();
+                    var output = outputStreamReader.ReadToEnd();
+                    var normalizedInput = NormalizeLineEndings(input);
+                    var normalizedOutput = NormalizeLineEndings(output);
+
+                    yield return new object[] { normalizedInput, normalizedOutput };
+                }
+            }
+        }
+
+        private static string NormalizeLineEndings(string input) =>
+            input
+                .Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
+                .Join("\r\n");
     }
 }
