@@ -13,12 +13,12 @@
     using Microsoft.CodeAnalysis.CSharp;
 
     [Shared]
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(TrailingWhitespaceCodeFixProvider))]
-    public sealed class TrailingWhitespaceCodeFixProvider : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(TrailingWhitespaceFix))]
+    public sealed class TrailingWhitespaceFix : CodeFixProvider
     {
         private const string title = "Remove trailing whitespace";
 
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(TrailingWhitespaceDiagnosticAnalyzer.DiagnosticId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(TrailingWhitespaceAnalyzer.DiagnosticId);
 
         public sealed override FixAllProvider GetFixAllProvider() =>
             WellKnownFixAllProviders.BatchFixer;

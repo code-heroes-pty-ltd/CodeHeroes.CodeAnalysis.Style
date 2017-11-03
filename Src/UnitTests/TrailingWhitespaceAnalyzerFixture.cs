@@ -1,10 +1,7 @@
 ﻿namespace CodeHeroes.CodeAnalysis.Style.UnitTests
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
     using CodeHeroes.CodeAnalysis.Style.UnitTests.TestHelper;
-    using Microsoft.CodeAnalysis;
     using Microsoft.CodeAnalysis.CodeFixes;
     using Microsoft.CodeAnalysis.Diagnostics;
     using Xunit;
@@ -13,111 +10,31 @@
 
     public sealed class TrailingWhitespaceAnalyzerFixture : CodeFixVerifier
     {
-        private const string source = @"
-
-using System;
-
-public class Foo : Bar
-{
-    public string Greeting=> ""Hello"";
-
-    public string Name
-    {
-        get => ""Fred"";
-        set => {}
-    }
-
-    // single-line comment
-    public int Baz(int param1, int     param2)
-    {
-        {}
-        {    }
-
-        return 42;
-    }
-
-    /*
-     * Multi-line comment
-     */
-    public float Fiz() =>
-        42f;
-}
-
-
-";
+        [Theory]
+        [MemberData(nameof(CH0001Diagnostics))]
+        public void ch0001_diagnoses_correctly(string[] sources, DiagnosticResult[] diagnosticResults)
+        {
+            this.VerifyCSharpDiagnostic(sources, diagnosticResults);
+        }
 
         [Theory]
-        [MemberData(nameof(GetPersonFromDataGenerator))]
-        public void trailing_whitespace_is_flagged_and_can_be_removed(string whitespace, string newLine)
+        [MemberData(nameof(CH0001Fixes))]
+        public void ch0001_fixes_correctly(string input, string output)
         {
-            var lineInfos = source
-                .Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
-                .Select((line, index) => (text: line, lineNumber: index + 1));
-            var normalizedSource = lineInfos
-                .Select(lineInfo => lineInfo.text)
-                .Join(newLine);
-            var rewrittenSource = lineInfos
-                .Select(lineInfo => lineInfo.text + whitespace)
-                .Join(newLine);
-            var expected = lineInfos
-                .Select(
-                    lineInfo =>
-                        new DiagnosticResult
-                        {
-                            Id = "CH0001",
-                            Message = "Remove trailing whitespace. Whilst this analyzer includes a code fix provider, it is recommended you install the Trailing Whitespace Visualizer add-in to automatically remove all trailing whitespace. See https://marketplace.visualstudio.com/items?itemName=MadsKristensen.TrailingWhitespaceVisualizer.",
-                            Severity = DiagnosticSeverity.Warning,
-                            Locations = new[]
-                            {
-                                new DiagnosticResultLocation("Test0.cs", lineInfo.lineNumber, lineInfo.text.Length + 1)
-                            }
-                        })
-                .ToArray();
-
-            this.VerifyCSharpDiagnostic(rewrittenSource, expected);
-
-            this.VerifyCSharpFix(rewrittenSource, normalizedSource);
+            Assert.NotEqual(input, output);
+            this.VerifyCSharpFix(input, output);
         }
 
-        public static IEnumerable<object[]> GetPersonFromDataGenerator()
-        {
-            var whitespaces = new[]
-            {
-                " ",
-                "    ",
-                "\t",
-                " \t\t     \t"
-            };
-            var newLines = new[]
-            {
-                "\r\n",
-                "\r",
-                "\n"
-            };
+        public static IEnumerable<object[]> CH0001Diagnostics =>
+            GetDataForDiagnosticVerification(TrailingWhitespaceAnalyzer.DiagnosticId);
 
-            foreach (var whitespace in whitespaces)
-            {
-                foreach (var newLine in newLines)
-                {
-                    yield return new[] { whitespace, newLine };
-                }
-            }
-        }
-
-        // Useful for quick, standalone tests.
-        [Fact]
-        public void test_bed()
-        {
-            var source = @"// hello  ";
-            var expected = @"// hello";
-
-            this.VerifyCSharpFix(source, expected);
-        }
+        public static IEnumerable<object[]> CH0001Fixes =>
+            GetDataForFixVerification(TrailingWhitespaceAnalyzer.DiagnosticId);
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer() =>
-            new TrailingWhitespaceDiagnosticAnalyzer();
+            new TrailingWhitespaceAnalyzer();
 
         protected override CodeFixProvider GetCSharpCodeFixProvider() =>
-            new TrailingWhitespaceCodeFixProvider();
+            new TrailingWhitespaceFix();
     }
 }

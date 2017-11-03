@@ -1,0 +1,41 @@
+﻿[
+    {
+        "Id": "CH0001",
+        "Message": "Remove trailing whitespace. Whilst this analyzer includes a code fix provider, it is recommended you install the Trailing Whitespace Visualizer add-in to automatically remove all trailing whitespace. See https://marketplace.visualstudio.com/items?itemName=MadsKristensen.TrailingWhitespaceVisualizer.",
+        "Severity": "Warning",
+        "Locations":
+        [
+            {
+                "path": "Test0.cs",
+                "line": 4,
+                "column": 2
+            }
+        ]
+    },
+    {
+        "Id": "CH0001",
+        "Message": "Remove trailing whitespace. Whilst this analyzer includes a code fix provider, it is recommended you install the Trailing Whitespace Visualizer add-in to automatically remove all trailing whitespace. See https://marketplace.visualstudio.com/items?itemName=MadsKristensen.TrailingWhitespaceVisualizer.",
+        "Severity": "Warning",
+        "Locations":
+        [
+            {
+                "path": "Test0.cs",
+                "line": 7,
+                "column": 28
+            }
+        ]
+    },
+    {
+        "Id": "CH0001",
+        "Message": "Remove trailing whitespace. Whilst this analyzer includes a code fix provider, it is recommended you install the Trailing Whitespace Visualizer add-in to automatically remove all trailing whitespace. See https://marketplace.visualstudio.com/items?itemName=MadsKristensen.TrailingWhitespaceVisualizer.",
+        "Severity": "Warning",
+        "Locations":
+        [
+            {
+                "path": "Test0.cs",
+                "line": 9,
+                "column": 6
+            }
+        ]
+    }
+]
