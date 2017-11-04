@@ -72,15 +72,15 @@
             var usings = namespaceNode.Usings;
             var insertPosition = GetInsertPositionFor(usingDirectiveNode, usings);
             var newUsings = usings.Insert(insertPosition, usingDirectiveNode);
+            var replacementNamespaceNode = namespaceNode
+                .WithUsings(newUsings)
+                .WithAdditionalAnnotations(Formatter.Annotation);
 
             var root = await document.GetSyntaxRootAsync();
             var trackedRoot = root.TrackNodes(namespaceNode, usingDirectiveNode);
             trackedRoot = trackedRoot.RemoveNode(trackedRoot.GetCurrentNode(usingDirectiveNode), SyntaxRemoveOptions.KeepNoTrivia);
-            trackedRoot = trackedRoot.ReplaceNode(trackedRoot.GetCurrentNode(namespaceNode), namespaceNode.WithUsings(newUsings));
-
-            var formattedRoot = Formatter.Format(trackedRoot, document.Project.Solution.Workspace);
-
-            var newDocument = document.WithSyntaxRoot(formattedRoot);
+            trackedRoot = trackedRoot.ReplaceNode(trackedRoot.GetCurrentNode(namespaceNode), replacementNamespaceNode);
+            var newDocument = document.WithSyntaxRoot(trackedRoot);
 
             return newDocument.Project.Solution;
         }
@@ -119,19 +119,20 @@
 
             if (isCompilationUnit)
             {
-                newParentNode = ((CompilationUnitSyntax)parentNode).WithUsings(usingDirectives);
+                newParentNode = ((CompilationUnitSyntax)parentNode)
+                    .WithUsings(usingDirectives)
+                    .WithAdditionalAnnotations(Formatter.Annotation);
             }
             else
             {
-                newParentNode = ((NamespaceDeclarationSyntax)parentNode).WithUsings(usingDirectives);
+                newParentNode = ((NamespaceDeclarationSyntax)parentNode)
+                    .WithUsings(usingDirectives)
+                    .WithAdditionalAnnotations(Formatter.Annotation);
             }
 
             var root = await document.GetSyntaxRootAsync();
             var newRoot = root.ReplaceNode(parentNode, newParentNode);
-
-            var formattedRoot = Formatter.Format(newRoot, document.Project.Solution.Workspace);
-
-            var newDocument = document.WithSyntaxRoot(formattedRoot);
+            var newDocument = document.WithSyntaxRoot(newRoot);
 
             return newDocument.Project.Solution;
         }
