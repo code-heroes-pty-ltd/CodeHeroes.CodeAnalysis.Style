@@ -144,10 +144,13 @@
             string fileExt = language == LanguageNames.CSharp ? CSharpDefaultFileExt : VisualBasicDefaultExt;
 
             var projectId = ProjectId.CreateNewId(debugName: TestProjectName);
-
             var solution = new AdhocWorkspace()
                 .CurrentSolution
                 .AddProject(projectId, TestProjectName, TestProjectName, language);
+
+            var project = solution.Projects.First();
+            solution = solution
+                .WithProjectParseOptions(projectId, project.ParseOptions.WithFeatures(project.ParseOptions.Features.Union(new KeyValuePair<string, string>[] { new KeyValuePair<string, string>("IOperation", "true") })));
                 //.AddMetadataReference(projectId, CorlibReference)
                 //.AddMetadataReference(projectId, SystemCoreReference)
                 //.AddMetadataReference(projectId, CSharpSymbolsReference)

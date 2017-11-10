@@ -21,7 +21,7 @@
             {
                 "path": "Test0.cs",
                 "line": 11,
-                "column": 70
+                "column": 76
             }
         ]
     },

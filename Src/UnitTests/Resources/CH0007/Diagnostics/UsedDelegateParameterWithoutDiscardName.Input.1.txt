@@ -1,0 +1,10 @@
+﻿class Foo
+{
+    void Bar()
+    {
+        Func<string, int> f = delegate(string s)
+        {
+            return s.Length;
+        };
+    }
+}
