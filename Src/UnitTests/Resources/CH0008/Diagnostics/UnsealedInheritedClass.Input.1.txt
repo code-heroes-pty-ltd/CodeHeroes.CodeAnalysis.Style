@@ -1,0 +1,10 @@
+﻿namespace Foo
+{
+    public class Bar
+    {
+    }
+
+    public sealed class Baz : Bar
+    {
+    }
+}
