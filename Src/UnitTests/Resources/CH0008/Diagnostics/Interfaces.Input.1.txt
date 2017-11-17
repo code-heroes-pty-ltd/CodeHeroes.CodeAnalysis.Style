@@ -1,0 +1,10 @@
+﻿namespace Foo
+{
+    public interface IBar
+    {
+    }
+
+    public interface IBaz : IBar
+    {
+    }
+}

@@ -36,3 +36,7 @@ Flags any used identifiers whose names consist solely of underscore characters.
 ## Unused lambda parameters must have discard names (`CH0007`)
 
 Flags any unused lambda parameters whose names do not consist solely of underscore characters.
+
+## Seal classes where possible (`CH0008`)
+
+Classes that can be sealed should be.

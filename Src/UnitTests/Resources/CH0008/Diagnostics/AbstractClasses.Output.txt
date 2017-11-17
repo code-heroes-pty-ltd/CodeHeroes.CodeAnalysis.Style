@@ -1,0 +1,15 @@
+﻿[
+    {
+        "Id": "CH0008",
+        "Message": "Seal the class, or derive another from it.",
+        "Severity": "Warning",
+        "Locations":
+        [
+            {
+                "path": "Test0.cs",
+                "line": 7,
+                "column": 27
+            }
+        ]
+    }
+]
