@@ -23,56 +23,57 @@
 
         public override void Initialize(AnalysisContext context)
         {
+            context.EnableConcurrentExecution();
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
-            context.RegisterCompilationStartAction(ReportUnsealedClasses);
-        }
 
-        private static void ReportUnsealedClasses(CompilationStartAnalysisContext context)
-        {
             var unsealedClasses = new HashSet<INamedTypeSymbol>();
             var inheritedClasses = new HashSet<INamedTypeSymbol>();
 
-            context.RegisterSymbolAction(
-                analysisContext =>
+            context.RegisterCompilationStartAction(
+                compilationStartContext =>
                 {
-                    var symbol = analysisContext.Symbol;
+                    compilationStartContext.RegisterSymbolAction(
+                        symbolActionContext =>
+                        {
+                            var symbol = symbolActionContext.Symbol;
 
-                    if (!(symbol is INamedTypeSymbol namedTypeSymbol))
-                    {
-                        return;
-                    }
+                            if (!(symbol is INamedTypeSymbol namedTypeSymbol))
+                            {
+                                return;
+                            }
 
-                    if (namedTypeSymbol.TypeKind != TypeKind.Class)
-                    {
-                        return;
-                    }
+                            if (namedTypeSymbol.TypeKind != TypeKind.Class)
+                            {
+                                return;
+                            }
 
-                    if (namedTypeSymbol.IsStatic)
-                    {
-                        return;
-                    }
+                            if (namedTypeSymbol.IsStatic)
+                            {
+                                return;
+                            }
 
-                    if (!namedTypeSymbol.IsSealed)
-                    {
-                        unsealedClasses.Add(namedTypeSymbol);
-                    }
+                            if (!namedTypeSymbol.IsSealed)
+                            {
+                                unsealedClasses.Add(namedTypeSymbol);
+                            }
 
-                    inheritedClasses.Add(namedTypeSymbol.BaseType);
-                },
-                SymbolKind.NamedType);
+                            inheritedClasses.Add(namedTypeSymbol.BaseType);
+                        },
+                        SymbolKind.NamedType);
 
-            context.RegisterCompilationEndAction(
-                analysisContext =>
-                {
-                    var uninheritedClasses = unsealedClasses.Except(inheritedClasses).ToList();
+                    compilationStartContext.RegisterCompilationEndAction(
+                        compilationEndContext =>
+                        {
+                            var uninheritedClasses = unsealedClasses.Except(inheritedClasses).ToList();
 
-                    foreach (var uninheritedClass in uninheritedClasses)
-                    {
-                        var diagnostic = Diagnostic.Create(
-                            Rule,
-                            uninheritedClass.Locations.First());
-                        analysisContext.ReportDiagnostic(diagnostic);
-                    }
+                            foreach (var uninheritedClass in uninheritedClasses)
+                            {
+                                var diagnostic = Diagnostic.Create(
+                                    Rule,
+                                    uninheritedClass.Locations.First());
+                                compilationEndContext.ReportDiagnostic(diagnostic);
+                            }
+                        });
                 });
         }
     }
